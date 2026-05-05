@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss} %-5level - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- SILENCE EVERYTHING INTERNAL -->
+    <logger name="org.springframework" level="ERROR"/>
+    <logger name="org.springframework.security" level="ERROR"/>
+    <logger name="org.hibernate" level="ERROR"/>
+    <logger name="org.flywaydb" level="ERROR"/>
+    <logger name="com.sncft" level="WARN"/>
+    <logger name="com.sncft.app.shared.config.AdminSeeder" level="INFO"/>
+    <logger name="com.sncft.app.shared.exception.GlobalExceptionHandler" level="OFF"/>
+
+    <root level="ERROR">
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

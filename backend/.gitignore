@@ -1,0 +1,18 @@
+HELP.md
+target/
+.mvn/wrapper
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Environments
+src/main/resources/application.properties
+application.properties
+!application.properties.example
+
+
+### VS Code ###
+.vscode/
+
+# Logs
+*.log
+test_output.log

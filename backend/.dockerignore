@@ -1,0 +1,15 @@
+# Build artifacts
+target/
+*.jar
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Git
+.git
+.gitignore
+
+# Logs
+*.log

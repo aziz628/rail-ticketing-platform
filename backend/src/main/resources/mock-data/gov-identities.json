@@ -1,0 +1,17 @@
+[
+  {
+    "idNumber": "12345678",
+    "type": "CIN",
+    "fullName": "Mourad Ben Ali"
+  },
+  {
+    "idNumber": "87654321",
+    "type": "CIN",
+    "fullName": "Noura Trabelsi"
+  },
+  {
+    "idNumber": "202612345678",
+    "type": "BIRTH_CERT",
+    "fullName": "Ahmed Ben Youssef"
+  }
+]

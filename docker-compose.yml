@@ -1,0 +1,59 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: railticket
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"        # exposed so you can connect via DBeaver on host
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck: # check if the postgres is running
+      test: ["CMD-SHELL", "pg_isready -U admin -d railticket"] # test as admin and check if the railticket database is running
+      interval: 10s 
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"        # exposed so Spring on host can reach it
+    volumes:
+      - redisdata:/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    
+    environment: # overide spring app properties for docker internal routing
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/railticket
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+    depends_on: # param for wait for the service to be ready
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    profiles:
+      - full   # only starts with: docker compose --profile full up
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    profiles:
+      - full   # only starts with: docker compose --profile full up
+
+volumes: 
+  pgdata:
+  redisdata:

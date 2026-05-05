@@ -1,0 +1,60 @@
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource/plus-jakarta-sans/400.css";
+@import "@fontsource/plus-jakarta-sans/500.css";
+@import "@fontsource/plus-jakarta-sans/600.css";
+@import "@fontsource/plus-jakarta-sans/700.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    /* #f6f7f8 */
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --primary: 218 82% 23%;
+    /* #0b2e6a */
+    --primary-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222 47% 11.2%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 218 82% 23%;
+    --radius: 0.75rem;
+  }
+
+  body {
+    @apply bg-background-page text-slate-900;
+    font-family: "Plus Jakarta Sans", sans-serif;
+  }
+}
+
+@layer components {
+
+  /* Link Style */
+  .sncft-link {
+    @apply text-primary font-bold hover:underline transition-all;
+  }
+
+  /* Nav Link Style */
+  .sncft-nav-link {
+    @apply text-sm font-bold text-slate-900 hover:text-primary transition-colors;
+  }
+
+  /* Label Style: Matching prototype clean look */
+  .sncft-label {
+    @apply text-sm font-semibold text-slate-700 mb-1.5 inline-block;
+  }
+
+  /* Card Style: Using Surface Color */
+  .sncft-card {
+    @apply bg-surface rounded-2xl shadow-md border border-slate-100 overflow-hidden;
+  }
+}
