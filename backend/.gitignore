@@ -16,3 +16,5 @@ application.properties
 # Logs
 *.log
 test_output.log
+test-results
+uploads/proofs

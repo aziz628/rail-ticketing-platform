@@ -9,7 +9,7 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at DATE NOT NULL DEFAULT CURRENT_DATE,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
 
     CONSTRAINT uk_users_email UNIQUE (email),

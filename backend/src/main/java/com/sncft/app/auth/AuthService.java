@@ -5,6 +5,8 @@ import com.sncft.app.shared.exception.DuplicateResourceException;
 import com.sncft.app.shared.exception.InvalidCredentialsException;
 import com.sncft.app.shared.exception.ResourceNotFoundException;
 import com.sncft.app.shared.notification.EmailService;
+import com.sncft.app.ticket.ClientRestriction;
+import com.sncft.app.ticket.ClientRestrictionRepository;
 import com.sncft.app.user.User;
 import com.sncft.app.user.UserMapper;
 import com.sncft.app.user.UserRepository;
@@ -32,11 +34,12 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final OtpService otpService;
     private final EmailService emailService;
+    private final ClientRestrictionRepository clientRestrictionRepository;
 
     public AuthService(UserRepository userRepository, UserMapper userMapper, 
                        PasswordEncoder passwordEncoder, GovValidationService govValidationService, 
                        AuthenticationManager authenticationManager, OtpService otpService, 
-                       EmailService emailService) {
+                       EmailService emailService, ClientRestrictionRepository clientRestrictionRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
@@ -44,10 +47,11 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
         this.otpService = otpService;
         this.emailService = emailService;
+        this.clientRestrictionRepository = clientRestrictionRepository;
     }
 
     public UserResponse register(AuthRegisterRequest request) {
-        GovIdentity identity = govValidationService.validateIdentity(request.nationalIdType(), request.nationalIdNumber());
+        GovIdentity identity = govValidationService.validateIdentity(request.nationalIdType().name(), request.nationalIdNumber());
 
         if (userRepository.existsByNationalIdNumber(request.nationalIdNumber())) {
             throw new DuplicateResourceException("L'identité nationale est déjà enregistrée");
@@ -68,6 +72,16 @@ public class AuthService {
                 .build();
 
         User savedUser = userRepository.save(user);
+
+        // if the user is a voyager , save a client restriction record for him
+        if (savedUser.getRole() == UserRole.VOYAGER) {
+            clientRestrictionRepository.save(ClientRestriction.builder()
+                .user(savedUser)
+                .failedPaymentCount(0)
+                .blocked(false)
+                .build());
+        }
+
         return userMapper.toResponse(savedUser);
     }
 

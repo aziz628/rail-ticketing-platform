@@ -7,9 +7,12 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.BindException;
 import org.springframework.security.access.AccessDeniedException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,17 +24,38 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // 400 - BAD REQUEST (Validation & Logic)
-    @ExceptionHandler({MethodArgumentNotValidException.class, IllegalArgumentException.class})
+    // 400 - BAD REQUEST (Validation, Type Mismatch & Logic)
+    @ExceptionHandler({
+            MethodArgumentNotValidException.class, 
+            BindException.class,
+            MissingServletRequestParameterException.class,
+            IllegalArgumentException.class,
+            MethodArgumentTypeMismatchException.class
+    })
     public ResponseEntity<ErrorResponse> handleBadRequest(Exception ex, WebRequest request) {
         log.warn("Bad Request at {}: {}", request.getDescription(false), ex.getMessage());
         
         String message = ex.getMessage();
+        // handle the @Valid errors
         if (ex instanceof MethodArgumentNotValidException validationEx) {
             message = validationEx.getBindingResult().getFieldErrors().stream()
                     .map(error -> error.getDefaultMessage())
                     .findFirst()
                     .orElse("un ou plusieurs champs sont invalides");
+        } 
+        else if (ex instanceof BindException bindEx) {
+            // handle the type mismatch errors in DTO binding (query params)
+            message = bindEx.getFieldErrors().stream()
+                    .map(error -> "format de paramètre invalide pour: " + error.getField())
+                    .findFirst()
+                    .orElse("un ou plusieurs paramètres sont invalides");
+        }
+        else if (ex instanceof MissingServletRequestParameterException missingEx) {
+            message = "le paramètre '" + missingEx.getParameterName() + "' est requis";
+        }
+        // handle the type mismatch errors for single @RequestParam
+        else if (ex instanceof MethodArgumentTypeMismatchException typeEx) {
+            message = "format de paramètre invalide pour: " + typeEx.getName();
         }
         
         return buildResponse(HttpStatus.BAD_REQUEST, message, request);
@@ -83,6 +107,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMethodNotSupported(org.springframework.web.HttpRequestMethodNotSupportedException ex, WebRequest request) {
         log.warn("Method Not Allowed at {}: {}", request.getDescription(false), ex.getMessage());
         return buildResponse(HttpStatus.METHOD_NOT_ALLOWED, "méthode non autorisée", request);
+    }
+
+    // 410 - GONE (Session expired/removed)
+    @ExceptionHandler(MaxAttemptsReachedException.class)
+    public ResponseEntity<ErrorResponse> handleMaxAttemptsReached(MaxAttemptsReachedException ex, WebRequest request) {
+        log.warn("Payment session terminated: {}", ex.getMessage());
+        return buildResponse(HttpStatus.GONE, ex.getMessage(), request);
     }
   
 

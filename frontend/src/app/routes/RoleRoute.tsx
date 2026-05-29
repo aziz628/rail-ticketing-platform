@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useAuthStore } from '@/features/auth/stores/auth';
+import { useAuthStore } from '@/stores/auth';
 import type { UserRole } from '@/features/auth/types/auth';
 import { useViewMode } from '../provider';
 

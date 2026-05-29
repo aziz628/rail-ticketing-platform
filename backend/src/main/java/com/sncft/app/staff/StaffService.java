@@ -3,6 +3,7 @@ package com.sncft.app.staff;
 import com.sncft.app.infrastructure.line.Line;
 import com.sncft.app.infrastructure.line.LineRepository;
 import com.sncft.app.shared.dto.PaginatedResponse;
+import com.sncft.app.shared.exception.DataConflictException;
 import com.sncft.app.shared.exception.DuplicateResourceException;
 import com.sncft.app.shared.exception.ResourceNotFoundException;
 import com.sncft.app.user.User;
@@ -64,9 +65,13 @@ public class StaffService {
                 List.of(UserRole.AGENT),
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
         );
-        // get the active 
+
+        // canDelete only when there is more than one active agent
+        long totalAgents = userRepository.countByRoleAndIsDeletedFalse(UserRole.AGENT);
+        boolean canDelete = totalAgents > 1;
+
         List<AgentResponse> responses = userPage.getContent().stream()
-                .map(staffMapper::toAgentResponse)
+                .map(u -> staffMapper.toAgentResponse(u, canDelete))
                 .collect(Collectors.toList());
 
         return PaginatedResponse.of(userPage, responses);
@@ -78,8 +83,14 @@ public class StaffService {
                 PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "user.createdAt"))
         );
 
+        List<UUID> controllerIds = controllerPage.getContent().stream()
+                .map(cl -> cl.getUser().getId())
+                .collect(Collectors.toList());
+        
+        List<UUID> nonDeletableIds = userRepository.findControllersWithActiveSchedules(controllerIds);
+
         List<ControllerResponse> responses = controllerPage.getContent().stream()
-                .map(cl -> staffMapper.toControllerResponse(cl.getUser(), cl.getLine().getName()))
+                .map(cl -> staffMapper.toControllerResponse(cl.getUser(), cl.getLine().getName(), !nonDeletableIds.contains(cl.getUser().getId())))
                 .collect(Collectors.toList());
 
         return PaginatedResponse.of(controllerPage, responses);
@@ -119,7 +130,7 @@ public class StaffService {
         User user = User.builder()
                 .name(request.name())
                 .email(request.email())
-                .role(UserRole.CONTROLEUR)
+                .role(UserRole.CONTROLLER)
                 .password(passwordEncoder.encode(generatedPassword))
                 .isDeleted(false)
                 .build();
@@ -140,8 +151,22 @@ public class StaffService {
         User user = userRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Personnel non trouvé"));
 
-        if (user.getRole() != UserRole.AGENT && user.getRole() != UserRole.CONTROLEUR) {
+        if (user.getRole() != UserRole.AGENT && user.getRole() != UserRole.CONTROLLER) {
             throw new IllegalArgumentException("Impossible de désactiver cet utilisateur");
+        }
+        // if controller has an active schedule, throw exception
+        if (user.getRole() == UserRole.CONTROLLER) {
+            List<UUID> nonDeletable = userRepository.findControllersWithActiveSchedules(List.of(id));
+            if (!nonDeletable.isEmpty()) {
+                throw new DataConflictException("contrôleur assigné à un horaire actif");
+            }
+        } 
+        // if agent is last agent, throw exception
+        if (user.getRole() == UserRole.AGENT) {
+            long count = userRepository.countByRoleAndIsDeletedFalse(UserRole.AGENT);
+            if (count == 1) {
+                throw new DataConflictException("Impossible de désactiver le dernier agent");
+            }
         }
 
         user.setDeleted(true);

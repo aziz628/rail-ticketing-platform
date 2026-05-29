@@ -59,14 +59,14 @@ export const CreateAgentModal = ({ isOpen, onClose }: CreateAgentModalProps) => 
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sncft-modal-medium">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-slate-900">Nouveau membre de l'équipe</DialogTitle>
+          <DialogTitle className="sncft-modal-title">Nouveau membre de l'équipe</DialogTitle>
           <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Création d'un Agent de Vente</p>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="agent-name" className="text-sm font-semibold text-slate-700">Nom complet</Label>
+            <Label htmlFor="agent-name" className="sncft-form-label">Nom complet</Label>
             <Input
               id="agent-name"
               placeholder="Ex: Ahmed Ben Salem"
@@ -74,11 +74,11 @@ export const CreateAgentModal = ({ isOpen, onClose }: CreateAgentModalProps) => 
               className={errors.name ? 'border-red-500' : 'bg-slate-50 border-slate-200'}
             />
             {errors.name && (
-              <p className="text-xs font-medium text-red-500">{errors.name.message}</p>
+              <p className="sncft-form-error">{errors.name.message}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="agent-email" className="text-sm font-semibold text-slate-700">Adresse e-mail</Label>
+            <Label htmlFor="agent-email" className="sncft-form-label">Adresse e-mail</Label>
             <Input
               id="agent-email"
               type="email"
@@ -87,13 +87,13 @@ export const CreateAgentModal = ({ isOpen, onClose }: CreateAgentModalProps) => 
               className={errors.email ? 'border-red-500' : 'bg-slate-50 border-slate-200'}
             />
             {errors.email && (
-              <p className="text-xs font-medium text-red-500">{errors.email.message}</p>
+              <p className="sncft-form-error">{errors.email.message}</p>
             )}
           </div>
           <DialogFooter className="pt-4 gap-2">
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               onClick={onClose}
               disabled={createAgent.isPending}
               className="flex-1 font-bold text-slate-500"

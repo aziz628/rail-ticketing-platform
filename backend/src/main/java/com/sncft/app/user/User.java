@@ -16,7 +16,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -35,8 +35,9 @@ public class User {
     @Column(nullable = false, length = 120)
     private String name;
     
+    @Enumerated(EnumType.STRING)
     @Column(name = "national_id_type", length = 30)
-    private String nationalIdType;
+    private NationalIdType nationalIdType;
 
     @Column(name = "national_id_number", unique = true, length = 50)
     private String nationalIdNumber;
@@ -53,7 +54,7 @@ public class User {
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private LocalDate createdAt;
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;

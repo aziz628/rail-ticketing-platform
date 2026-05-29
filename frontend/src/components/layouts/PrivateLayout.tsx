@@ -52,28 +52,28 @@ export const PrivateLayout = ({ children, navItems, user }: PrivateLayoutProps) 
       />
 
       <main className="flex flex-1 mt-16 flex-col md:flex-row w-full relative">
-        {/* Desktop Sidebar (Fixed) */}
+        {/* fixe Desktop Sidebar */}
         <Sidebar 
           navItems={navItems} 
           className="hidden md:flex w-64 h-[calc(100vh-4rem)] fixed top-16 border-r border-slate-200 bg-surface" 
         />
 
-        {/* Mobile Sidebar Overlay
-        cover all of the main , pressing the menu button again will close it
+        {/* Mobile Sidebar Overlay , cover all of the main content
         */}
       
         {isMobileMenuOpen && (
-
-            <Sidebar 
-              navItems={navItems} 
-              className="w-full h-full bg-surface pt-4" 
-              onItemClick={() => setIsMobileMenuOpen(false)}
-            />
+            <div className="fixed inset-0 top-16 z-40 md:hidden">
+              <Sidebar 
+                navItems={navItems} 
+                className="w-full h-full bg-surface pt-4" 
+                onItemClick={() => setIsMobileMenuOpen(false)}
+              />
+            </div>
         )}
 
-        {/* Main Content Area: Offset by sidebar width */}
-        <div className="flex-1 w-full md:ml-64 flex flex-col p-6 md:p-8">
-          <div className="max-w-6xl w-full mx-auto">
+        {/* Main Content Area: Offset the sidebar width */}
+        <div className="flex-1 min-w-0 w-full md:ml-64 flex flex-col p-6 md:p-8">
+          <div className="max-w-6xl w-full mx-auto overflow-hidden">
             {children}
           </div>
         </div>

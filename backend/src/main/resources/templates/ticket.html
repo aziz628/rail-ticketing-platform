@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Billet de Train</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            color: black;
+            padding: 20px;
+        }
+
+        .ticket-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border: 2px solid #333;
+            padding: 30px;
+        }
+
+        /* Header */
+        .ticket-header {
+            text-align: center;
+            padding-bottom: 15px;
+        }
+
+        .company-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .ticket-type {
+            font-size: 20px;
+            color: #252525;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Main Content */
+        .ticket-content {
+            width: 100%;
+            margin-bottom: 30px;
+            border-collapse: collapse;
+        }
+
+        .left-section {
+            width: 100%;
+            vertical-align: top;
+        }
+
+        .qr-section-container {
+            width: 100%;
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px dashed #ccc;
+            margin-top: 20px;
+        }
+
+        /* Trip Details */
+        .trip-details {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        .trip-route {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .station {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .arrow {
+            display: inline-block;
+            margin: 0 10px;
+            font-size: 20px;
+        }
+
+        /* Station Table */
+        .stations-table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: separate;
+            border-spacing: 10px 0;
+        }
+
+        .station-cell {
+            background-color: white;
+            border: 2px solid #333;
+            padding: 15px;
+            text-align: center;
+            border-radius: 4px;
+            width: 50%;
+        }
+
+        .station-label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .station-name {
+            margin: 0;
+        }
+         /* Ticket Details Table */
+        .details-table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+
+        .details-label {
+            width: 50%;
+            text-align: right;
+            padding-right: 15px;
+            font-weight: bold;
+            color: #666;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+
+        .details-value {
+            width: 50%;
+            text-align: left;
+            padding-left: 15px;
+            color: #222;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* QR Code Section */
+        .qr-section {
+            text-align: center;
+        }
+
+        .qr-code {
+            width: 300px;
+            height: 300px;
+            border: 2px solid #333;
+            display: inline-block;
+            padding: 15px;
+            background-color: white;
+        }
+
+        .qr-label {
+            margin-top: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        /* Ticket Info Box */
+        .info-box {
+            background-color: #f0f0f0;
+            border-left: 4px solid #333;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 3px;
+        }
+
+        .info-box-title {
+            font-weight: bold;
+            font-size: 12px;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .info-box-content {
+            font-size: 14px;
+        }
+
+        /* Passenger Info */
+        .passenger-info {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        .passenger-info-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .passenger-details {
+            font-size: 13px;
+        }
+
+        .passenger-details .detail-row {
+            grid-template-columns: auto 1fr;
+            margin-bottom: 5px;
+        }
+
+        /* Price Section */
+        .price-section {
+            background-color: #e8e8e8;
+            border: 2px solid #333;
+            padding: 15px;
+            text-align: center;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+
+        .price-label {
+            font-size: 18px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .price-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+        }
+
+
+
+        /* Responsive (Note: PDF renderer may not support this, so we use a robust base layout) */
+        @media (max-width: 600px) {
+            .ticket-container {
+                padding: 10px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                padding: 0;
+            }
+
+            .ticket-container {
+                max-width: 100%;
+                border: none;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ticket-container">
+        <!-- Header -->
+        <div class="ticket-header">
+            <div class="ticket-type">Billet de Train</div>
+        </div>
+
+        <!-- Main Content -->
+        <table class="ticket-content">
+            <!-- QR Code Section with extra margin -->
+            <tr style="display: flex; justify-content: center;  margin-bottom: 20px;">
+                <td class="qr-section-container">
+                    <div class="qr-section">
+                        <div class="qr-code">
+                            <img th:src="${'data:image/png;base64,' + qrCode}" width="270" height="270" alt="QR Code" />
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="left-section" >
+                    <!-- Trip Details -->
+                    <div class="trip-details">
+                        <!-- Source and Destination Split -->
+                        <table class="stations-table">
+                            <tr>
+                                <td class="station-cell">
+                                    <div class="station-label">Départ</div>
+                                    <div class="station station-name" th:text="${originStation}">Tunis</div>
+                                </td>
+                                <td class="station-cell">
+                                    <div class="station-label">Arrivée</div>
+                                    <div class="station station-name" th:text="${destinationStation}">Sousse</div>
+                                </td>
+                            </tr>
+                        </table>
+
+                        <table class="details-table">
+                            <tr>
+                                <td class="details-label">Date :</td>
+                                <td class="details-value" th:text="${tripDate}">2024-05-12</td>
+                            </tr>
+                            <tr>
+                                <td class="details-label">Heure Départ :</td>
+                                <td class="details-value" th:text="${departureTime}">08:00</td>
+                            </tr>
+                            <tr>
+                                <td class="details-label">Heure Arrivée :</td>
+                                <td class="details-value" th:text="${arrivalTime}">10:00</td>
+                            </tr>
+                            <tr>
+                                <td class="details-label">Classe :</td>
+                                <td class="details-value" th:text="${seatClass}">CONFORT</td>
+                            </tr>
+                            <tr>
+                                <td class="details-label">Train :</td>
+                                <td class="details-value" th:text="${trainType}">EXPRESS</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Price Section -->
+                    <div class="price-section">
+                        <div class="price-label">Prix Total</div>
+                        <div class="price-value"><span th:text="${finalPrice}">15.50</span> TND</div>
+                    </div>
+                </td>
+            </tr>
+        
+        </table>
+       
+    </div>
+</body>
+</html>

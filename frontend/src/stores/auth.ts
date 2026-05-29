@@ -7,17 +7,7 @@ import { create } from 'zustand';
  * tracks is_authenticated state and user role so for UI conditional display 
  */
 
-export type UserRole = 'VOYAGER' | 'ADMIN' | 'AGENT' | 'CONTROLLER';
-
-// Standard User Shape
-export type AuthUser = {
-  id: string;
-  email: string;
-  role: UserRole;
-  name: string;
-  nationalIdType: string;
-  nationalIdNumber: string;
-};
+import type {  AuthUser } from '@/features/auth/types/auth';
 
 
 // The Zustand Shape Model

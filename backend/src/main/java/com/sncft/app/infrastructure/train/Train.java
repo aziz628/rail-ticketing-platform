@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.annotations.BatchSize;
+
 @Entity
 @Table(name = "train_types")
 @Getter
@@ -41,6 +43,7 @@ public class Train {
     private BigDecimal basePriceIncreasePercentage = BigDecimal.ZERO;
 
     @OneToMany(mappedBy = "train", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 3)
     @Builder.Default
     private List<SeatClass> seatClasses = new ArrayList<>();
 

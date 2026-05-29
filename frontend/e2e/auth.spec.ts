@@ -8,6 +8,10 @@ test.describe('Auth flows with MSW worker', () => {
     await page.fill('input[name="email"]', 'test@example.com');
     await page.fill('input[name="password"]', 'password123');
     await page.click('button[type="submit"]');
+    await page.waitForURL(PATHS.VOYAGER.TICKETS);
+
+    // open profile page
+    await page.getByRole('link', { name: 'Profile' }).click();
 
     await page.waitForURL(PATHS.VOYAGER.PROFILE);
 
@@ -49,6 +53,10 @@ test.describe('Auth flows with MSW worker', () => {
 
     const registerResponse = await registerResponsePromise;
     expect(registerResponse.status()).toBe(201);
+    await page.waitForURL(PATHS.VOYAGER.TICKETS);
+
+    // open profile page
+    await page.getByRole('link', { name: 'Profile' }).click();
 
     await page.waitForURL(PATHS.VOYAGER.PROFILE);
 
@@ -92,6 +100,9 @@ test.describe('Auth flows with MSW worker', () => {
     const loginResponse = await loginResponsePromise;
     expect(loginResponse.status()).toBe(200);
 
+    await page.waitForURL(PATHS.VOYAGER.TICKETS);
+    // open profile page
+    await page.getByRole('link', { name: 'Profile' }).click();
     await page.waitForURL(PATHS.VOYAGER.PROFILE);
     const logoutResponsePromise = page.waitForResponse((response) => response.url().includes('/api/auth/logout'));
     

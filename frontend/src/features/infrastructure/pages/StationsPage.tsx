@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Plus, Edit2, Trash2, MapPin} from 'lucide-react';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { useStations, useDeleteStation } from '../api/use-infrastructure';
 import type { Station } from '../types';
 import { CreateStationModal } from '../components/CreateStationModal';
@@ -18,7 +18,7 @@ import { Card } from '@/components/ui/card';
 import { useNotifications } from '@/stores/notifications-store';
 import { LoadMoreButton } from '@/components/common/LoadMoreButton';
 import { PrivateLayout } from '@/components/layouts/PrivateLayout';
-import { useAuthStore } from '@/features/auth/stores/auth';
+import { useAuthStore } from '@/stores/auth';
 import { useNavigation } from '@/hooks/use-navigation';
 
 import { ConfirmationModal } from '@/components/common/ConfirmationModal';
@@ -96,14 +96,13 @@ export const StationsPage = () => {
 
   return (
     <PrivateLayout navItems={navItems} user={user}>
-      <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="sncft-page-shell sncft-page-content sncft-page-section">
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-              <MapPin className="h-6 w-6 text-primary" />
+          <div className="sncft-page-header">
+            <h1 className="sncft-page-title">
               Stations de transport
             </h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="sncft-page-subtitle">
               Gérez les stations disponibles sur le réseau ferroviaire.
             </p>
           </div>

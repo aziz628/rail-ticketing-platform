@@ -1,7 +1,7 @@
 export type Station = {
   id: string;
   name: string;
-  canDelete: boolean;
+  canDelete?: boolean;
 };
 
 export type StationRequest = {
@@ -34,7 +34,7 @@ export type Train = {
   name: string;
   basePriceIncreasePercentage: number;
   seatClasses: SeatClass[];
-  canDelete: boolean;
+  canDelete?: boolean;
 };
 
 export type TrainRequest = {
@@ -49,6 +49,7 @@ export type TrainPatchRequest = {
 };
 
 export type LineNode = {
+  id: string;
   stationName: string;
   kmFromSource: number;
   orderIndex: number;
@@ -63,7 +64,7 @@ export type Line = {
   id: string;
   name: string;
   nodes: LineNode[];
-  canDelete: boolean;
+  canDelete?: boolean;
 };
 
 export type LineRequest = {

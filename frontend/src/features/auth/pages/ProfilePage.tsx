@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/features/auth/stores/auth";
+import { useAuthStore } from "@/stores/auth";
 import { PrivateLayout } from "@/components/layouts/PrivateLayout";
 import { ProfileInfoRow } from "../components/ProfileInfoRow";
 import { ChangePasswordModal } from "../components/ChangePasswordModal";
@@ -12,7 +12,7 @@ import { useViewMode } from '@/app/provider';
 import { useNavigation } from "@/hooks/use-navigation";
 
 export const ProfilePage = () => {
-  const { isStaff, paths } = useViewMode();
+  const {paths,isStaff } = useViewMode();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const navigate = useNavigate();
   const logoutMutation = useLogoutMutation();
@@ -24,14 +24,14 @@ export const ProfilePage = () => {
 
   return (
     <PrivateLayout navItems={navItems} user={user}>
-      <div className="w-full space-y-6">
+      <div className="sncft-page-shell sncft-page-content sncft-page-section">
         {/* Profile Header */}
-        <div className="mb-4">
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-            {isStaff ? 'Profil Administrateur' : 'Mon Profil'}
-          </h2>
-          <p className="text-sm text-slate-500 mt-1">
-            {isStaff ? 'Gérez vos identifiants administrateur système.' : 'Consultez et gérez les détails de votre compte.'}
+        <div className="sncft-page-header">
+          <h1 className="sncft-page-title">
+            Profil
+          </h1>
+          <p className="sncft-page-subtitle">
+            Gérez les détails de votre compte.
           </p>
         </div>
 
@@ -45,12 +45,12 @@ export const ProfilePage = () => {
 
               <div className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
                 <ProfileInfoRow 
-                  label={isStaff ? "Nom de l'administrateur" : "Nom complet"} 
+                  label= "Nom complet" 
                   value={user.name} 
                   icon={User}
                 />
                 <ProfileInfoRow 
-                  label={isStaff ? "Adresse email système" : "Adresse email"} 
+                  label= "Adresse email" 
                   value={user.email} 
                   icon={Mail}
                 />

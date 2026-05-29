@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Plus, Trash2, Train as TrainIcon, Armchair, Edit } from 'lucide-react';
+import { Plus, Trash2, Armchair, Edit } from 'lucide-react';
 import { useTrains, useDeleteTrain } from '../api/use-infrastructure';
 import type { Train } from '../types';
 import { CreateTrainModal } from '../components/CreateTrainModal';
@@ -10,7 +10,7 @@ import { RotatingLoader } from '@/components/ui/rotating-loader';
 import { useNotifications } from '@/stores/notifications-store';
 import { LoadMoreButton } from '@/components/common/LoadMoreButton';
 import { PrivateLayout } from '@/components/layouts/PrivateLayout';
-import { useAuthStore } from '@/features/auth/stores/auth';
+import { useAuthStore } from '@/stores/auth';
 import { useNavigation } from '@/hooks/use-navigation';
 import { cn } from '@/lib/utils';
 
@@ -74,16 +74,15 @@ export const TrainsPage = () => {
 
   return (
     <PrivateLayout navItems={navItems} user={user}>
-      <div className="space-y-6 animate-in fade-in duration-500">
+      <div className="sncft-page-shell sncft-page-content sncft-page-section">
         {/* content header  */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           {/* title and subtitle  */}
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-              <TrainIcon className="h-6 w-6 text-primary" />
+          <div className="sncft-page-header">
+            <h1 className="sncft-page-title">
               Types de Trains
             </h1>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="sncft-page-subtitle">
               Gérez les trains et les capacités de leurs classes de sièges.
             </p>
           </div>
@@ -105,7 +104,7 @@ export const TrainsPage = () => {
               <div className="flex justify-between items-start">
                 {/* train name and base price increase percentage */}
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 dark:text-white">{train.name}</h3>
+                  <h3 className="sncft-heading-md">{train.name}</h3>
                   <span className="inline-block mt-1 px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-bold rounded uppercase">
                     +{train.basePriceIncreasePercentage}% Prix de base
                   </span>

@@ -100,9 +100,9 @@ export const CreateLineModal = ({ isOpen, onClose }: CreateLineModalProps) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] flex flex-col p-0 overflow-hidden">
+      <DialogContent className="sncft-modal-large max-h-[95vh] flex flex-col p-0 overflow-hidden">
         <DialogHeader className="p-6 pb-2">
-          <DialogTitle>Créer une ligne stricte</DialogTitle>
+          <DialogTitle className="sncft-modal-title">Créer une ligne stricte</DialogTitle>
           <p className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-wider">Constructeur de séquence (Min. 2 gares)</p>
         </DialogHeader>
 
@@ -110,14 +110,14 @@ export const CreateLineModal = ({ isOpen, onClose }: CreateLineModalProps) => {
           <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
             {/* name field */}
             <div className="space-y-2">
-              <Label htmlFor="line-name">Nom de la ligne</Label>
+              <Label htmlFor="line-name" className="sncft-form-label">Nom de la ligne</Label>
               <Input 
                 id="line-name" 
                 placeholder="Ex: Tunis - Sousse" 
                 {...register('name')}
                 className="bg-slate-50 dark:bg-slate-800 border-slate-200"
               />
-              {errors.name && <p className="text-xs text-red-500 font-medium">{errors.name.message}</p>}
+              {errors.name && <p className="sncft-form-error">{errors.name.message}</p>}
             </div>
 
             {/* stations sequence field */}
@@ -255,7 +255,7 @@ export const CreateLineModal = ({ isOpen, onClose }: CreateLineModalProps) => {
           </div>
 
           <DialogFooter className="p-6 pt-2 border-t border-slate-50 dark:border-slate-800">
-            <Button type="button" variant="ghost" onClick={onClose} disabled={createLine.isPending} className="flex-1 font-bold text-slate-500">
+            <Button type="button" variant="outline" onClick={onClose} disabled={createLine.isPending} className="flex-1 font-bold text-slate-500">
               Annuler
             </Button>
             <Button type="submit" disabled={createLine.isPending} className="flex-1 font-bold shadow-md shadow-primary/20">

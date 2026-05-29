@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.sncft.app.shared.config.AppConstants;
 import com.sncft.app.shared.dto.PaginatedResponse;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -28,7 +28,7 @@ public class LineController {
 
     @GetMapping
     public PaginatedResponse<LineResponse> getAllLines(@RequestParam(defaultValue = "0") int page) {
-        return lineService.getAllLines(page, 10);
+        return lineService.getAllLines(page, AppConstants.PAGE_SIZE);
     }
 
     @PostMapping

@@ -1,0 +1,23 @@
+  [
+  {
+    "number": "3712 3456 7890 1234",
+    "holder": "MOHAMED MEJRI",
+    "expiry": "12/28",
+    "cvv": "123",
+    "balance": 500.00
+  },
+  {
+    "number": "5105 1051 0510 5105",
+    "holder": "KARIM RAJHI",
+    "expiry": "06/27",
+    "cvv": "456",
+    "balance": 5.00
+  },
+  {
+    "number": "3712 3456 7890 1234",
+    "holder": "MEZIN KRAMTI",
+    "expiry": "01/26",
+    "cvv": "789",
+    "balance": 1000.00
+  }
+]

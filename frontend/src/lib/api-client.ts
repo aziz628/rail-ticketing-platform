@@ -35,7 +35,7 @@ function getErrorMessage(error: unknown) {
     if (error.code === 'ECONNABORTED') {
       return 'Le délai de la requête a expiré.';
     }
-    if (error.response?.status === 500) {
+    if (error.response?.status && error.response.status >= 500) {
       return 'Une erreur interne est survenue sur le serveur.';
     }
 
@@ -67,7 +67,6 @@ function authRequestInterceptor(config: InternalAxiosRequestConfig) {
         config.headers['x-mock-session'] = mockSession;
       }
     }
-    
   }
   
   config.withCredentials = true;
@@ -89,10 +88,22 @@ export const api = Axios.create({
 api.interceptors.request.use(authRequestInterceptor);
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     const status = error.response?.status;
-    const isValidationError = status === 400 || status === 422;// validation error can contains many fields so we let the component to handle it
     const silent = isSilentRequest(error.config);
+
+    // If download endpoint got an error, and  the response type is set a Blob
+    // we  parse it as JSON to get the actual error message.
+    if (error.response?.data instanceof Blob) {
+      try {
+        const text = await error.response.data.text();
+        error.response.data = JSON.parse(text);
+      } catch (e) {
+        // Not a JSON blob
+      }
+    }
+
+    const isValidationError = status === 400 || status === 422;
 
     // show api error for all request except unauthenticated, validation errors and silent requests
     if (!silent && status !== 401 && !isValidationError) {

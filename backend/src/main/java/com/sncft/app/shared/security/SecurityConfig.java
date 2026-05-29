@@ -24,11 +24,12 @@ public class SecurityConfig {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired(required = false) 
+    @Autowired(required = false)
     private AuthRateLimiter authRateLimiter;
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -46,18 +47,30 @@ public class SecurityConfig {
                 // Link the CORS config from AppConfig implicitly by doing this:
                 .cors(Customizer.withDefaults()) // withDefaults(): look for @CorsConfigurationSource bean and use it
 
-                // Sessions are now part of the plan, so Spring create them when authentication succeeds.
+                // Sessions are now part of the plan, so Spring create them when authentication
+                // succeeds.
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
 
                 // Define endpoint access rules
                 .authorizeHttpRequests(auth -> auth
-                        // context-path in application.properties already adds /api prefix to ALL routes.
+                        // context-path in application.properties already adds /api prefix to ALL
+                        // routes.
                         // So here we write paths WITHOUT /api (Spring sees /auth/**, not /api/auth/**)
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(
+                                "/auth/**",
+                                "/trips/search",
+                                "/trips/*/booking-details",
+                                "/stations",
+                                "/lines",
+                                "/subscription-categories",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html")
+                        .permitAll()
 
                         // Every other request explicitly needs an authenticated user
                         .anyRequest().authenticated())
-                        
+
                 // logout configuration
                 .logout(logout -> logout
                         .logoutUrl("/auth/logout")
@@ -67,17 +80,16 @@ public class SecurityConfig {
                             response.setStatus(200);
                             response.setContentType("application/json");
                             response.getWriter().write(
-                                objectMapper.writeValueAsString(
-                                    new MessageResponse("Logged out successfully")
-                                )
-                            );
+                                    objectMapper.writeValueAsString(
+                                            new MessageResponse("Logged out successfully")));
                         }));
 
-        // add the rate limiter before the first authentication filter of spring security (to prevent brue force attacks)
+        // add the rate limiter before the first authentication filter of spring
+        // security (to prevent brue force attacks)
         if (authRateLimiter != null) {
             http.addFilterBefore(authRateLimiter, UsernamePasswordAuthenticationFilter.class);
         }
-        
+
         return http.build();
     }
 }

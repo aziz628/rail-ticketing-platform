@@ -5,10 +5,10 @@ export const NotFoundPage = () => {
         <div className="space-y-2">
           <h1 className="text-9xl font-black text-slate-400 select-none">404</h1>
           <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-            Page Not Found
+            Page Introuvable
           </h2>
           <p className="text-slate-500 text-lg">
-            Sorry, we couldn't find the page you're looking for. It might have been moved or deleted.
+            Désolé, nous n'avons pas trouvé la page que vous recherchez.
           </p>
         </div>
 

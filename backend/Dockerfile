@@ -17,4 +17,5 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 # Expose the application port
 EXPOSE 8080
+#command that will always be executed when the container starts
 ENTRYPOINT ["java", "-jar", "app.jar"]

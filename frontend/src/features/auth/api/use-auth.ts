@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { authApi } from './auth';
-import { useAuthStore } from '@/features/auth/stores/auth';
+import { useAuthStore } from '@/stores/auth';
 import { useNotifications } from '@/stores/notifications-store';
 import type {
   AuthLoginRequest,
@@ -39,6 +39,7 @@ export const getAuthErrorMessage = (error: unknown, fallback = 'an error occurre
   // Return the fallback message if the error message cannot be extracted
   return fallback;
 };
+
 
 
 /**
@@ -156,7 +157,7 @@ export const useLogoutMutation = () => {
       logout();
       queryClient.removeQueries({ queryKey: authKeys.me });
       addNotification({
-        type: 'info',
+        type: 'success',
         text: 'Vous avez été déconnecté avec succès.',
       });
     },

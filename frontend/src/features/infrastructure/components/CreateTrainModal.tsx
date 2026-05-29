@@ -93,23 +93,23 @@ export const CreateTrainModal = ({ isOpen, onClose }: CreateTrainModalProps) => 
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-xl">
+      <DialogContent className="sncft-modal-xl ">
         <DialogHeader>
-          <DialogTitle>Nouveau modèle de train</DialogTitle>
+          <DialogTitle className="sncft-modal-title">Nouveau modèle de train</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 py-4">
           {/* train name and base price increase percentage */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="train-name">Nom du modèle</Label>
+              <Label htmlFor="train-name" className="sncft-form-label">Nom du modèle</Label>
               <Input id="train-name" placeholder="Ex: Alstom Coradia" {...register('name')} />
-              {errors.name && <p className="text-xs text-red-500 font-medium">{errors.name.message}</p>}
+              {errors.name && <p className="sncft-form-error">{errors.name.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="base-price">Majoration de base (%)</Label>
+              <Label htmlFor="base-price" className="sncft-form-label">Majoration de base (%)</Label>
               <Input id="base-price" type="number" {...register('basePriceIncreasePercentage')} />
               {errors.basePriceIncreasePercentage && (
-                <p className="text-xs text-red-500 font-medium">{errors.basePriceIncreasePercentage.message}</p>
+                <p className="sncft-form-error">{errors.basePriceIncreasePercentage.message}</p>
               )}
             </div>
           </div>
@@ -185,7 +185,7 @@ export const CreateTrainModal = ({ isOpen, onClose }: CreateTrainModalProps) => 
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className='pt-0'>
             <Button type="button" variant="outline" onClick={onClose} disabled={createTrain.isPending}>
               Annuler
             </Button>

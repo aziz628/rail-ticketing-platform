@@ -6,22 +6,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class StaffMapper {
 
-    public AgentResponse toAgentResponse(User user) {
+    public AgentResponse toAgentResponse(User user, boolean canDelete) {
         return new AgentResponse(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                true // canDelete mocked as true for now (deferred to Schedules sprint)
+                canDelete
         );
     }
 
-    public ControllerResponse toControllerResponse(User user, String controllerLineName) {
+    public ControllerResponse toControllerResponse(User user, String controllerLineName, boolean canDelete) {
         return new ControllerResponse(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
                 controllerLineName,
-                true // canDelete mocked as true for now (deferred to Schedules sprint)
+                canDelete
         );
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.sncft.app.shared.exception.ErrorResponse;
+// jackson for json serialization
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -28,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Profile("!test")
 public class AuthRateLimiter extends OncePerRequestFilter {
 
-    // create a map to store buckets for each IP
+    // create a map to store the rates buckets for each IP
     private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
 
     private final ObjectMapper objectMapper; 
@@ -50,7 +51,7 @@ public class AuthRateLimiter extends OncePerRequestFilter {
             // get or create a bucket for the IP (save requests count from the same IP)
             Bucket bucket = buckets.computeIfAbsent(ip, this::createNewBucket);
 
-            // if request count limit per IP is reached, return 429
+            // check ability to make request. if request count limit per IP is reached return 429
             if (!bucket.tryConsume(1)) { 
 
                 response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
@@ -59,7 +60,7 @@ public class AuthRateLimiter extends OncePerRequestFilter {
                 ErrorResponse errorResponseDto = new ErrorResponse(
                     HttpStatus.TOO_MANY_REQUESTS.value(),
                     HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase(),
-                    "Too many requests. Please wait a minute.",
+                    "Trop de tentatives de connexion. Veuillez réessayer plus tard.",
                     request.getRequestURI()
                 );
                 // serialize error dto to json format and send it using response writer
@@ -82,7 +83,7 @@ public class AuthRateLimiter extends OncePerRequestFilter {
      * this means that the IP can make 10 requests per minute 
      */
     private Bucket createNewBucket(String ip) {
-        // Professional non-deprecated way to define limits in Bucket4j 8.x
+        //  define limits
         return Bucket.builder()
                 .addLimit(Bandwidth.builder()
                         .capacity(10)

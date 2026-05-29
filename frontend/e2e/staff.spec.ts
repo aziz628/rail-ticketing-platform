@@ -7,7 +7,7 @@ const loginAsAdmin = async (page: any) => {
   await page.fill('input[name="password"]', 'admin123');
   await page.click('button[type="submit"]');
 
-  await page.waitForURL(PATHS.ADMIN.PROFILE);
+  await page.waitForURL(PATHS.ADMIN.TRIPS);
   await expect(page.getByRole('banner')).toContainText('Administrateur');
 };
 
@@ -66,13 +66,14 @@ test.describe('Staff Management flows (Admin)', () => {
     await page.fill('input[id="email"]', 'yassine@sncft.tn');
     
     // Select line (Tunis ↔ Sfax)
-    await page.click('button:has-text("Sélectionner une ligne")');
+    await page.click('button[id="ligne selector"]');
     
     // Use getByRole to ensure we click the option in the dropdown, not the background table
     const option = page.getByRole('option', { name: 'Tunis ↔ Sfax' });
     await expect(option).toBeVisible();
     await option.click();
-    
+
+
     await page.click('button:has-text("Créer le contrôleur")');
     
     // Success notification and visibility

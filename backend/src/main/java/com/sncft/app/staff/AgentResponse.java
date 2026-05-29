@@ -7,6 +7,5 @@ public record AgentResponse(
         String name,
         String email,
         boolean canDelete
-// TODO: add Handled,Pending sub requests
 ) {
 }

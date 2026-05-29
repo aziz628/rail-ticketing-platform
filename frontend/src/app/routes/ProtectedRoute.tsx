@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router-dom';
-import { useAuthStore } from '@/features/auth/stores/auth';
+import { useAuthStore } from '@/stores/auth';
 import type { UserRole } from '@/features/auth/types/auth';
+import { ROLES } from "@/features/auth/types/auth";
 import { RotatingLoader } from '@/components/ui/rotating-loader';
 import { useViewMode } from '@/app/provider';
 import PATHS from '../paths';
@@ -26,8 +27,11 @@ export const ProtectedRoute = ({
 
   // redirect unallowed users to their default home 
   if (allowedRoles && user && !allowedRoles.includes(user.role)) {
-    // use user role to get his profile    
-    const userPath = user.role === 'VOYAGER' ? PATHS.VOYAGER.PROFILE : PATHS.ADMIN.PROFILE;
+    const userPath = user.role === ROLES.VOYAGER
+      ? PATHS.VOYAGER.TICKETS
+      : user.role === ROLES.ADMIN
+        ? PATHS.ADMIN.DASHBOARD
+        : PATHS.STAFF.PROFILE;
     return <Navigate to={userPath} replace />;
   }
 

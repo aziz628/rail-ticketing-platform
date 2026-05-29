@@ -4,5 +4,5 @@ public enum UserRole {
     VOYAGER,
     ADMIN,
     AGENT,
-    CONTROLEUR
+    CONTROLLER
 }

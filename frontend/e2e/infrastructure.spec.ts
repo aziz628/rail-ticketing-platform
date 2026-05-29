@@ -7,7 +7,7 @@ const loginAsAdmin = async (page: any) => {
   await page.fill('input[name="password"]', 'admin123');
   await page.click('button[type="submit"]');
 
-  await page.waitForURL(PATHS.ADMIN.PROFILE);
+  await page.waitForURL(PATHS.ADMIN.TRIPS);
   await expect(page.getByRole('banner')).toContainText('Administrateur');
 };
 
@@ -44,7 +44,7 @@ test.describe('Infrastructure flows (Admin)', () => {
   test('Trains: Create flow and Validation', async ({ page }) => {
     await page.getByRole('link', { name: 'Trains' }).click();
 
-    await expect(page.getByText('Alstom Coradia')).toBeVisible();
+    await expect(page.getByText('EXP', {exact: true})).toBeVisible();
 
     await page.click('button:has-text("Nouveau train")');
     
@@ -72,6 +72,8 @@ test.describe('Infrastructure flows (Admin)', () => {
     await page.fill('input[name="nodes.1.kmFromSource"]', '0');
     await page.click('button:has-text("Verrouiller & Créer")');
 
+    // wait a second so that the validation message appears
+    await page.waitForTimeout(500);
     await expect(page.getByText('Les distances doivent être strictement croissantes')).toBeVisible();
 
     await page.click('button:has-text("Ajouter une gare intermédiaire")');

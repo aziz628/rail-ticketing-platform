@@ -3,11 +3,22 @@ export async function enableMocking() {
   // Only enable MSW if we are explicitly running in 'test' mode
   if (import.meta.env.MODE !== 'test') return;
 
-  // Dynamically import the modules after env check (avoid unnecessary imports)
-  const { initializeDb } = await import('./db');
-  const { worker } = await import('./browser'); // browser.ts sets up the MSW worker with our auth handlers and exports it
+ // sessionStorage key of DB
+  const DB_INIT_KEY = 'msw-db-initialized';
 
-  // Initialize the mock database and start the MSW worker before rendering the app
-  await initializeDb();
+  // initialize the DB once per browser session
+  if (!sessionStorage.getItem(DB_INIT_KEY)) {
+    const { initializeDb } = await import('./db');
+    await initializeDb();
+    // set db initialized flag
+    sessionStorage.setItem(DB_INIT_KEY, '1');
+  } else {
+    // restore db from session storage after each page hard navigation , because the app will re-fetch and re-import everything which resets mockDb
+    const { restoreMockDb } = await import('./db');
+    restoreMockDb();
+  }
+
+  // Start the worker 
+  const { worker } = await import('./browser');
   await worker.start({ onUnhandledRequest: 'warn' });
 }

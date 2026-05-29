@@ -32,7 +32,7 @@ public class StaffSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        long staffCount = userRepository.countByRoleIn(List.of(UserRole.AGENT, UserRole.CONTROLEUR));
+        long staffCount = userRepository.countByRoleIn(List.of(UserRole.AGENT, UserRole.CONTROLLER));
         if (staffCount > 0) {
             log.info("Staff users already exist. Skipping Staff Seeder.");
             return;
@@ -61,7 +61,7 @@ public class StaffSeeder implements CommandLineRunner {
                     .name("Controleur Test")
                     .email("controleur@sncft.tn")
                     .password(passwordEncoder.encode("controleur123"))
-                    .role(UserRole.CONTROLEUR)
+                    .role(UserRole.CONTROLLER)
                     .isDeleted(false)
                     .build();
             userRepository.save(controller);

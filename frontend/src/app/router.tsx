@@ -18,7 +18,21 @@ import { StationsPage } from "@/features/infrastructure/pages/StationsPage";
 import { TrainsPage } from "@/features/infrastructure/pages/TrainsPage";
 import { LinesPage } from "@/features/infrastructure/pages/LinesPage";
 import { StaffPage } from "@/features/staff/pages/StaffPage";
-
+import { SchedulesPage } from "@/features/schedules/pages/SchedulesPage";
+import { SearchPage } from "@/features/ticketing/pages/SearchPage";
+import { SearchResultsPage } from "@/features/ticketing/pages/SearchResultsPage";
+import { TicketDetailsPage } from "@/features/ticketing/pages/TicketDetailsPage";
+import { MyTicketsPage } from "@/features/ticketing/pages/MyTicketsPage";
+import { PaymentPspPage } from "@/features/payment/pages/PaymentPspPage";
+import { PaymentSuccessPage, PaymentFailedPage } from "@/features/payment/pages/PaymentResultPages";
+import { AdminCategoriesPage } from "@/features/subscriptions/pages/AdminCategoriesPage";
+import { OffersPage } from "@/features/subscriptions/pages/OffersPage";
+import { AgentRequestsPage } from "@/features/subscriptions/pages/AgentRequestsPage";
+import { MySubscriptionsPage } from "@/features/subscriptions/pages/MySubscriptionsPage";
+import { SubscriptionRequestPage } from "@/features/subscriptions/pages/SubscriptionRequestPage";
+import { ROLES} from '@/features/auth/types/auth';
+import { TripsPage } from '@/features/trips/pages/TripsPage';
+import { AdminDashboardPage } from '@/features/dashboard/pages/AdminDashboardPage';
 /**
  * GLOBAL ROUTER (The Navigation Shell)
  * 
@@ -28,6 +42,20 @@ import { StaffPage } from "@/features/staff/pages/StaffPage";
 export const AppRouter = () => {
   return (
     <Routes>
+      {/* Public Ticketing Routes */}
+      <Route path={PATHS.VOYAGER.SEARCH} element={<SearchPage />} />
+      <Route path={PATHS.VOYAGER.OFFERS} element={<OffersPage />} />
+      <Route path={PATHS.VOYAGER.SUBSCRIPTIONS} element={<ProtectedRoute allowedRoles={[ROLES.VOYAGER]}><MySubscriptionsPage /></ProtectedRoute>} />
+      <Route path={`${PATHS.VOYAGER.SUBSCRIPTION_REQUEST}/:category`} element={<SubscriptionRequestPage />} />
+      <Route path={PATHS.VOYAGER.SUBSCRIPTION_REQUEST} element={<SubscriptionRequestPage />} />
+      <Route path={PATHS.VOYAGER.RESULTS} element={<SearchResultsPage />} />
+      <Route path={PATHS.VOYAGER.TRIP_DETAILS} element={<TicketDetailsPage />} />
+      
+      {/* Payment Flow */}
+      <Route path={PATHS.VOYAGER.PAYMENT_SUCCESS} element={<PaymentSuccessPage />} />
+      <Route path={PATHS.VOYAGER.PAYMENT_FAILED} element={<PaymentFailedPage />} />
+      <Route path={`${PATHS.VOYAGER.PAYMENT}/:sessionId`} element={<PaymentPspPage />} />
+
       {/*  Voyager Auth Routes */}
       <Route path={PATHS.VOYAGER.LOGIN} element={<GuestOnlyRoute><LoginPage /></GuestOnlyRoute>} />
       <Route path={PATHS.VOYAGER.REGISTER} element={<GuestOnlyRoute><RegisterPage /></GuestOnlyRoute>} />
@@ -42,22 +70,25 @@ export const AppRouter = () => {
       {/* Private Routes */}
       
         {/*Voyager routes */}
-        <Route path={PATHS.VOYAGER.PROFILE} element={<ProtectedRoute allowedRoles={['VOYAGER']}><ProfilePage /></ProtectedRoute>} />
+        <Route path={PATHS.VOYAGER.PROFILE} element={<ProtectedRoute allowedRoles={[ROLES.VOYAGER]}><ProfilePage /></ProtectedRoute>} />
+        <Route path={PATHS.VOYAGER.TICKETS} element={<ProtectedRoute allowedRoles={[ROLES.VOYAGER]}><MyTicketsPage /></ProtectedRoute>} />
         
         {/* staff routes */}
-        <Route path={PATHS.STAFF.PROFILE} element={<ProtectedRoute allowedRoles={['ADMIN','AGENT','CONTROLLER']}><ProfilePage /></ProtectedRoute>} />
+        <Route path={PATHS.STAFF.PROFILE} element={<ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.AGENT, ROLES.CONTROLLER]}><ProfilePage /></ProtectedRoute>} />
+        <Route path={PATHS.AGENT.SUBSCRIPTION_REQUESTS} element={<ProtectedRoute allowedRoles={[ROLES.AGENT]}><AgentRequestsPage /></ProtectedRoute>} />
 
         {/* Admin routes */}
-        <Route path={PATHS.ADMIN.STATIONS} element={<ProtectedRoute allowedRoles={['ADMIN']}><StationsPage /></ProtectedRoute>} />
-        <Route path={PATHS.ADMIN.TRAINS} element={<ProtectedRoute allowedRoles={['ADMIN']}><TrainsPage /></ProtectedRoute>} />
-        <Route path={PATHS.ADMIN.LINES} element={<ProtectedRoute allowedRoles={['ADMIN']}><LinesPage /></ProtectedRoute>} />
-        <Route path={PATHS.ADMIN.STAFF} element={<ProtectedRoute allowedRoles={['ADMIN']}><StaffPage /></ProtectedRoute>} />
+        <Route path={PATHS.ADMIN.DASHBOARD} element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]}><AdminDashboardPage /></ProtectedRoute>} />
+        <Route path={PATHS.ADMIN.STATIONS} element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]}><StationsPage /></ProtectedRoute>} />
+        <Route path={PATHS.ADMIN.TRAINS} element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]}><TrainsPage /></ProtectedRoute>} />
+        <Route path={PATHS.ADMIN.LINES} element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]}><LinesPage /></ProtectedRoute>} />
+        <Route path={PATHS.ADMIN.STAFF} element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]}><StaffPage /></ProtectedRoute>} />
+        <Route path={PATHS.ADMIN.SCHEDULES} element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]}><SchedulesPage /></ProtectedRoute>} />
+        <Route path={PATHS.ADMIN.TRIPS} element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]}><TripsPage /></ProtectedRoute>} />
+        <Route path={PATHS.ADMIN.SUBSCRIPTIONS} element={<ProtectedRoute allowedRoles={[ROLES.ADMIN]}><AdminCategoriesPage /></ProtectedRoute>} />
   
       {/* Fallback */}
-      
-      {// temporary until we add search route 
-      }
-      <Route path="/" element={<Navigate to={PATHS.VOYAGER.LOGIN} replace />} />
+      <Route path="/" element={<Navigate to={PATHS.VOYAGER.SEARCH} />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

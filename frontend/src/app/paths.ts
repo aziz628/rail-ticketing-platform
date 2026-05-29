@@ -1,6 +1,8 @@
 // Centralized route paths 
 export const PATHS = {
   HOME: '/',
+
+
   
   // Voyager paths
   VOYAGER: {
@@ -10,9 +12,15 @@ export const PATHS = {
     RESET: '/reset-password',
     PROFILE: '/profile',
     SEARCH: '/search',
+    RESULTS: '/search-results',
+    TRIP_DETAILS: '/trips',
     OFFERS: '/offers',
+    SUBSCRIPTION_REQUEST: '/subscriptions/request',
     TICKETS: '/tickets',
     SUBSCRIPTIONS: '/subscriptions',
+    PAYMENT: '/payment', // pspSessionId manualy added when using navigate() , already added ":id" to react router path   
+    PAYMENT_SUCCESS: '/payment/success',
+    PAYMENT_FAILED: '/payment/failed',
   },
 
   // Staff paths
@@ -33,6 +41,14 @@ export const PATHS = {
     TRAINS: '/staff/trains',
     LINES: '/staff/lines',
     STAFF: '/staff/management',
+    SCHEDULES: '/staff/schedules',
+    TRIPS: '/staff/trips',
+    SUBSCRIPTIONS: '/staff/subscriptions',
+  }
+
+  // agent paths
+  ,AGENT: {
+    SUBSCRIPTION_REQUESTS: '/staff/subscription-requests',
   }
 } as const;
 

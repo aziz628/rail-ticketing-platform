@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 public interface LineMapper {
     
     @Mapping(target = "canDelete", source = "canDelete")
-    LineResponse toResponse(Line line, boolean canDelete);
+    LineResponse toResponse(Line line, Boolean canDelete);
     
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "nodes", ignore = true)

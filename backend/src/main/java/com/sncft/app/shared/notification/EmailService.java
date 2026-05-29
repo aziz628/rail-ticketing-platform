@@ -15,7 +15,7 @@ public class EmailService {
     }
 
     /**
-     * Sends an OTP email asynchronously.
+     * Sends an OTP in email .
      */
     @Async
     public void sendOtpEmail(String to, String otp) {

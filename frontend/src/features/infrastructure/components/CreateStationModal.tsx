@@ -60,20 +60,20 @@ export const CreateStationModal = ({ isOpen, onClose }: CreateStationModalProps)
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
+      <DialogContent className="sncft-modal-medium">
         <DialogHeader>
-          <DialogTitle>Ajouter une nouvelle gare</DialogTitle>
+          <DialogTitle className="sncft-modal-title">Ajouter une nouvelle gare</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nom de la gare</Label>
+            <Label htmlFor="name" className="sncft-form-label">Nom de la gare</Label>
             <Input
               id="name"
               placeholder="Ex: Tunis Ville"
               {...register('name')}
             />
             {errors.name && (
-              <p className="text-xs font-medium text-red-500">
+              <p className="sncft-form-error">
                 {errors.name.message}
               </p>
             )}

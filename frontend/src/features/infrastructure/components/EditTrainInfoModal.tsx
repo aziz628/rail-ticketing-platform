@@ -82,9 +82,9 @@ export const EditTrainInfoModal = ({ train, isOpen, onClose }: EditTrainInfoModa
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="sncft-modal-small">
         <DialogHeader>
-          <DialogTitle>Informations du Train</DialogTitle>
+          <DialogTitle className="sncft-modal-title">Informations du Train</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
           <div className="space-y-1.5">

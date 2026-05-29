@@ -102,4 +102,5 @@ public class InfrastructureSeeder implements CommandLineRunner {
                 .priceIncreasePercentage(new BigDecimal(increase))
                 .build();
     }
+
 }

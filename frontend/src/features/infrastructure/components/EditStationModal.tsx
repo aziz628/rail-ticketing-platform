@@ -73,20 +73,20 @@ export const EditStationModal = ({ station, isOpen, onClose }: EditStationModalP
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent>
+      <DialogContent className="sncft-modal-medium">
         <DialogHeader>
-          <DialogTitle>Modifier la gare</DialogTitle>
+          <DialogTitle className="sncft-modal-title">Modifier la gare</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="edit-name">Nom de la gare</Label>
+            <Label htmlFor="edit-name" className="sncft-form-label">Nom de la gare</Label>
             <Input
               id="edit-name"
               placeholder="Ex: Tunis Ville"
               {...register('name')}
             />
             {errors.name && (
-              <p className="text-xs font-medium text-red-500">
+              <p className="sncft-form-error">
                 {errors.name.message}
               </p>
             )}

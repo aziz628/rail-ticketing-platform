@@ -3,6 +3,7 @@ package com.sncft.app.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sncft.app.shared.notification.EmailService;
 import com.sncft.app.user.User;
+import com.sncft.app.user.NationalIdType;
 import com.sncft.app.user.UserRepository;
 import com.sncft.app.user.UserRole;
 import org.junit.jupiter.api.BeforeEach;
@@ -67,7 +68,7 @@ class AuthControllerTest {
 
     @Test
     void register_withValidData_shouldReturnCreated() throws Exception {
-        AuthRegisterRequest request = new AuthRegisterRequest("CIN", "12345678", "test@example.com", "password123");
+        AuthRegisterRequest request = new AuthRegisterRequest(NationalIdType.CIN, "12345678", "test@example.com", "password123");
 
         mockMvc.perform(post("/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -80,7 +81,7 @@ class AuthControllerTest {
     @Test
     void register_withDuplicateEmail_shouldReturnConflict() throws Exception {
         register_withValidData_shouldReturnCreated();
-        AuthRegisterRequest request = new AuthRegisterRequest("CIN", "87654321", "test@example.com", "password123");
+        AuthRegisterRequest request = new AuthRegisterRequest(NationalIdType.CIN, "87654321", "test@example.com", "password123");
 
         // send request and check if it returns 409 (Conflict)
         mockMvc.perform(post("/auth/register")

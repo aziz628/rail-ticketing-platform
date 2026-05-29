@@ -15,7 +15,7 @@ import type {
 
 export const authApi = {
   registerClient: async (data: AuthRegisterRequest) => {
-    const response = await api.post<AuthUser>('/auth/register', data, { _silent: true });
+    const response = await api.post<AuthUser>('/auth/register', data, { _silent: true });// silent so we handle notifs in page component instead of global api client 
     return response.data;
   },
 

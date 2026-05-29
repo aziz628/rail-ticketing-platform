@@ -25,10 +25,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.UUID;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class StaffControllerTest {
+class StaffTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -57,7 +59,7 @@ class StaffControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        // Delete in FK-safe order,  child tables first
+        // Delete in in FK-safe order,  child tables first
         controllerLineRepository.deleteAll();
         userRepository.deleteAll();
         lineRepository.deleteAll();
@@ -146,7 +148,7 @@ class StaffControllerTest {
                 .name("Controller 1")
                 .email("controller1@sncft.tn")
                 .password(passwordEncoder.encode("pass"))
-                .role(UserRole.CONTROLEUR)
+                .role(UserRole.CONTROLLER)
                 .isDeleted(false)
                 .build();
         userRepository.save(controller);
@@ -202,7 +204,6 @@ class StaffControllerTest {
     }
 
     // CREATE CONTROLLER
-
     @Test
     void createController_asAdmin_shouldSucceed() throws Exception {
         CreateControllerRequest request = new CreateControllerRequest(
@@ -225,7 +226,7 @@ class StaffControllerTest {
         CreateControllerRequest request = new CreateControllerRequest(
                 "Ghost Controller",
                 "ghost@sncft.tn",
-                java.util.UUID.randomUUID() // random UUID that doesn't exist
+                UUID.randomUUID() // random UUID that doesn't exist
         );
 
         mockMvc.perform(post("/staff/controllers")
@@ -236,18 +237,34 @@ class StaffControllerTest {
     }
 
     //  DEACTIVATE 
-
     @Test
     void deactivateAgent_asAdmin_shouldSoftDelete() throws Exception {
         User agent = User.builder()
-                .name("To Deactivate")
-                .email("todeactivate@sncft.tn")
+                .name("agent1")
+                .email("agent1@sncft.tn")
                 .password(passwordEncoder.encode("pass"))
                 .role(UserRole.AGENT)
                 .isDeleted(false)
                 .build();
         userRepository.save(agent);
 
+        // Deactivate the agent and expect 409 "Impossible de désactiver le dernier agent"
+        mockMvc.perform(delete("/staff/agents/" + agent.getId())
+                .session(adminSession))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message", is("Impossible de désactiver le dernier agent")));
+
+        // add another agent
+        User agent2 = User.builder()
+                .name("Agent 2")
+                .email("agent2@sncft.tn")
+                .password(passwordEncoder.encode("pass"))
+                .role(UserRole.AGENT)
+                .isDeleted(false)
+                .build();
+        userRepository.save(agent2);
+
+        // Deactivate the agent and expect 200 
         mockMvc.perform(delete("/staff/agents/" + agent.getId())
                 .session(adminSession))
                 .andExpect(status().isOk());

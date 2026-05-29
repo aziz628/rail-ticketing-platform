@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,21 +32,27 @@ public class LineService {
 
     @Transactional(readOnly = true)
     public PaginatedResponse<LineResponse> getAllLines(int page, int size) {
+        // get lines with pagination 
         Page<Line> linePage = lineRepository.findAllWithNodes(PageRequest.of(page, size));
         List<Line> lines = linePage.getContent();
         
         if (lines.isEmpty()) {
             return PaginatedResponse.of(linePage, Collections.emptyList());
         }
+        
+        boolean isAdmin = SecurityContextHolder.getContext().getAuthentication() != null && 
+                SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
         // get all line ids
         List<UUID> lineIds = lines.stream().map(Line::getId).toList();
 
         // get all non deletable line ids
-        List<UUID> nonDeletableIds = lineRepository.findNonDeletableLineIds(lineIds);
+        List<UUID> nonDeletableIds = isAdmin ? lineRepository.findNonDeletableLineIds(lineIds) : Collections.emptyList();
 
-        // set canDelete to true if the line is not in the nonDeletableIds list
+        // set canDelete to true if the line is not in the nonDeletableIds list, or null if not admin
         List<LineResponse> content = lines.stream()
-                .map(line -> lineMapper.toResponse(line, !nonDeletableIds.contains(line.getId())))
+                .map(line -> lineMapper.toResponse(line, isAdmin ? !nonDeletableIds.contains(line.getId()) : null))
                 .collect(Collectors.toList());
         
         return PaginatedResponse.of(linePage, content);

@@ -1,5 +1,6 @@
 package com.sncft.app.staff;
 
+import com.sncft.app.shared.config.AppConstants;
 import com.sncft.app.shared.dto.PaginatedResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,10 +29,9 @@ public class StaffController {
     @GetMapping("/agents")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PaginatedResponse<AgentResponse>> getAgents(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "0") int page
     ) {
-        return ResponseEntity.ok(staffService.getAgents(page, size));
+        return ResponseEntity.ok(staffService.getAgents(page, AppConstants.PAGE_SIZE));
     }
 
     @PostMapping("/agents")
@@ -53,10 +53,9 @@ public class StaffController {
     @GetMapping("/controllers")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PaginatedResponse<ControllerResponse>> getControllers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "0") int page
     ) {
-        return ResponseEntity.ok(staffService.getControllers(page, size));
+        return ResponseEntity.ok(staffService.getControllers(page, AppConstants.PAGE_SIZE));
     }
 
     @PostMapping("/controllers")

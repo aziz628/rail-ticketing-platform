@@ -41,6 +41,7 @@ public class SeatClass {
     @Column(nullable = false, length = 50)
     private SeatClassType type;
 
+    // capacity start at 100% and decrese with tickets sold in the train trip
     @Column(nullable = false)
     private int capacity;
 

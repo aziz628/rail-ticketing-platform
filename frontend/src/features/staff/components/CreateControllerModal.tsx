@@ -15,6 +15,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  selectItemsGenerator,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -39,10 +40,7 @@ export const CreateControllerModal = ({ isOpen, onClose }: CreateControllerModal
     return linesData?.pages.flatMap((page) => page.content) || [];
   }, [linesData]);
 
-  const selectItems = React.useMemo(() => 
-    lines.map((line: Line) => ({ value: line.id, label: line.name })),
-    [lines]
-  );
+  const selectItems = selectItemsGenerator<Line>(lines);
 
   const {
     register,
@@ -55,7 +53,7 @@ export const CreateControllerModal = ({ isOpen, onClose }: CreateControllerModal
     defaultValues: {
       name: '',
       email: '',
-      lineId: '',
+      lineId: selectItems[0]?.value || '',
     },
   });
 
@@ -83,13 +81,13 @@ export const CreateControllerModal = ({ isOpen, onClose }: CreateControllerModal
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sncft-modal-medium">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Créer un Contrôleur</DialogTitle>
+          <DialogTitle className="sncft-modal-title">Créer un Contrôleur</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nom complet</Label>
+            <Label htmlFor="name" className="sncft-form-label">Nom complet</Label>
             <Input
               id="name"
               placeholder="Ex: Selma Ben Amor"
@@ -97,11 +95,11 @@ export const CreateControllerModal = ({ isOpen, onClose }: CreateControllerModal
               className={errors.name ? 'border-red-500' : ''}
             />
             {errors.name && (
-              <p className="text-xs font-medium text-red-500">{errors.name.message}</p>
+              <p className="sncft-form-error">{errors.name.message}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email">Adresse e-mail</Label>
+            <Label htmlFor="email" className="sncft-form-label">Adresse e-mail</Label>
             <Input
               id="email"
               type="email"
@@ -110,11 +108,11 @@ export const CreateControllerModal = ({ isOpen, onClose }: CreateControllerModal
               className={errors.email ? 'border-red-500' : ''}
             />
             {errors.email && (
-              <p className="text-xs font-medium text-red-500">{errors.email.message}</p>
+              <p className="sncft-form-error">{errors.email.message}</p>
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="lineId">Ligne assignée</Label>
+            <Label htmlFor="lineId" className="sncft-form-label">Ligne assignée</Label>
             <Controller
               control={control}
               name="lineId"
@@ -125,8 +123,9 @@ export const CreateControllerModal = ({ isOpen, onClose }: CreateControllerModal
                   value={field.value}
                   onValueChange={field.onChange}
                 >
-                  <SelectTrigger className={cn("w-full h-11", errors.lineId ? 'border-red-500' : '')}>
-                    <SelectValue placeholder="Sélectionner une ligne" />
+                  <SelectTrigger id='ligne selector' className={cn("w-full h-11", errors.lineId ? 'border-red-500' : '')}>
+                    {/* set default value  */}
+                    <SelectValue placeholder={selectItems[0]?.label || 'Sélectionner une ligne'} />
                   </SelectTrigger>
                   <SelectContent>
                     {selectItems.map((item) => (

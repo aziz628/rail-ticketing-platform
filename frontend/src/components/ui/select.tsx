@@ -6,6 +6,24 @@ import { Select as SelectPrimitive } from "@base-ui/react/select"
 import { cn } from "@/lib/utils"
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
 
+// type for select items list
+export type SelectItem<T> = {
+  value: T;
+  label: string;
+};
+
+/**
+ * convert an array of objects with id and name to an array of SelectItem
+ * @param items - array of objects with id and name
+ * @returns array of SelectItem
+ 
+ * item T will extends id and name and have id as string
+*/
+export const selectItemsGenerator = <T extends {id: string, name: string}>(items: T[])=> React.useMemo(() => 
+  items.map((item): SelectItem<string> => ({ value: item.id , label: item.name }) ),
+  [items]
+);
+ 
 // Select wrapper: forwards all Root props including `items` so SelectValue
 // can display the human-readable label instead of the raw value.
 function Select<Value = any, Multiple extends boolean | undefined = false>(

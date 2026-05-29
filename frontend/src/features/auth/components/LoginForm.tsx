@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { PATHS } from '@/app/paths';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,7 +16,6 @@ import { useViewMode } from '@/app/provider';
 export const LoginForm = () => {
   const { isStaff, paths } = useViewMode();
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
 
   // get the right login mutation based on the role
   const loginMutation = isStaff ? useStaffLoginMutation() : useLoginMutation();
@@ -29,7 +28,6 @@ export const LoginForm = () => {
 
   const onSubmit = async (data: LoginInput) => {
     loginMutation.mutate(data, {
-      onSuccess: () => navigate(paths.PROFILE),
       onError: (error) => {
         addNotification({
           type: 'error',
@@ -45,7 +43,7 @@ export const LoginForm = () => {
 
         <div className="mb-8 text-center">
           <h1 className="text-slate-900 text-2xl font-extrabold tracking-tight mb-2">
-            {isStaff ? 'Portail Staff' : 'Bienvenue'}
+            Bienvenue
           </h1>
           <p className="text-slate-500 text-sm">
             {isStaff ? 'Connectez-vous pour accéder aux comptes administratifs.' : 'Connectez-vous pour gérer vos billets et abonnements.'}

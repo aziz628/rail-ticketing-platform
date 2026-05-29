@@ -2,7 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import * as React from 'react';
 import { useEffect } from 'react';
 import { queryClient } from '../lib/react-query';
-import { useAuthStore } from '@/features/auth/stores/auth';
+import { useAuthStore } from '@/stores/auth';
 import { useMeQuery } from '@/features/auth/api/use-auth';
 import { RotatingLoader } from '@/components/ui/rotating-loader';
 import { Notifications } from '@/components/ui/notifications/notifications';

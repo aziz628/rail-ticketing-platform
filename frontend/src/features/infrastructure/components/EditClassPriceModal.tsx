@@ -79,9 +79,9 @@ export const EditClassPriceModal = ({ trainId, seatClass, isOpen, onClose }: Edi
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="sncft-modal-small">
         <DialogHeader>
-          <DialogTitle>Modifier le Prix</DialogTitle>
+          <DialogTitle className="sncft-modal-title">Modifier le Prix</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 py-4">
           <div className="relative">

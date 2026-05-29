@@ -34,7 +34,7 @@ export const ConfirmationModal = ({
 }: ConfirmationModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="sncft-modal-medium">
         <DialogHeader>
           <div className="flex items-center gap-3">
             {variant === 'danger' && (
@@ -42,7 +42,7 @@ export const ConfirmationModal = ({
                 <AlertTriangle className="h-5 w-5 text-red-600" />
               </div>
             )}
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle className="sncft-modal-title">{title}</DialogTitle>
           </div>
           <DialogDescription className="pt-2">
             {description}
@@ -61,8 +61,7 @@ export const ConfirmationModal = ({
             type="button"
             onClick={onConfirm}
             disabled={isLoading}
-            variant={variant === 'danger' ? 'default' : 'primary-sncft'}
-            className={variant === 'danger' ? 'bg-red-600 hover:bg-red-700 text-white border-none' : ''}
+            variant={variant === 'danger' ? 'danger' : 'primary-sncft'}
           >
             {isLoading ? 'Chargement...' : confirmText}
           </Button>

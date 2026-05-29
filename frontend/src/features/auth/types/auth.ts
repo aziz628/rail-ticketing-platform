@@ -1,6 +1,13 @@
 // This file defines TypeScript interfaces for authentication-related API requests and user models.
 
-export type UserRole = 'VOYAGER' | 'ADMIN' | 'AGENT' | 'CONTROLLER';
+export const ROLES = {
+  VOYAGER: 'VOYAGER',
+  ADMIN: 'ADMIN',
+  AGENT: 'AGENT',
+  CONTROLLER: 'CONTROLLER',
+} as const;
+
+export type UserRole = keyof typeof ROLES;
 
 export interface AuthUser {
   name: string;

@@ -9,7 +9,7 @@ This is the Spring Boot backend application for the SNCFT railway ticketing and 
 *   **Redis 7** (Session Management & OTP Caching)
 *   **Flyway** (Database Migrations)
 *   **MapStruct & Lombok** (Boilerplate reduction)
-*   **JUnit 5 & MockMvc** (Integration Testing)
+*   **MockMvc** (Integration Testing)
 
 ## Project Architecture
 the project is built using DDD and layered architecture pattern.

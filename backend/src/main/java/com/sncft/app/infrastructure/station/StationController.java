@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.sncft.app.shared.dto.PaginatedResponse;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,7 +18,6 @@ public class StationController {
     private final StationService stationService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public PaginatedResponse<StationResponse> getAllStations(@RequestParam(defaultValue = "0") int page) {
         // fixed payload size of 10
         return stationService.getAllStations(page, 10);

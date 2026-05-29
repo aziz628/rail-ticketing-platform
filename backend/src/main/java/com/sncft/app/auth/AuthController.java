@@ -5,10 +5,10 @@ import com.sncft.app.user.UserResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,41 +22,42 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponse> register(@Valid @RequestBody AuthRegisterRequest request) {
-        return new ResponseEntity<>(authService.register(request), HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserResponse register(@Valid @RequestBody AuthRegisterRequest request) {
+        return authService.register(request);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@Valid @RequestBody AuthLoginRequest request, HttpServletRequest httpRequest) {
-        return ResponseEntity.ok(authService.login(request, httpRequest));
+    public UserResponse login(@Valid @RequestBody AuthLoginRequest request, HttpServletRequest httpRequest) {
+        return authService.login(request, httpRequest);
     }
 
     @PostMapping("/staff/login")
-    public ResponseEntity<UserResponse> staffLogin(@Valid @RequestBody AuthLoginRequest request, HttpServletRequest httpRequest) {
-        return ResponseEntity.ok(authService.staffLogin(request, httpRequest));
+    public UserResponse staffLogin(@Valid @RequestBody AuthLoginRequest request, HttpServletRequest httpRequest) {
+        return authService.staffLogin(request, httpRequest);
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<MessageResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+    public MessageResponse forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         authService.forgotPassword(request);
-        return ResponseEntity.ok(new MessageResponse("OTP sent to your email"));
+        return new MessageResponse("OTP sent to your email");
     }
 
     @PostMapping("/staff/forgot-password")
-    public ResponseEntity<MessageResponse> staffForgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+    public MessageResponse staffForgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
         authService.forgotPassword(request);
-        return ResponseEntity.ok(new MessageResponse("OTP sent to your email"));
+        return new MessageResponse("OTP sent to your email");
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<MessageResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+    public MessageResponse resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         authService.resetPassword(request);
-        return ResponseEntity.ok(new MessageResponse("Password reset successfully"));
+        return new MessageResponse("Password reset successfully");
     }
 
     @PostMapping("/staff/reset-password")
-    public ResponseEntity<MessageResponse> staffResetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+    public MessageResponse staffResetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         authService.resetPassword(request);
-        return ResponseEntity.ok(new MessageResponse("Password reset successfully"));
+        return new MessageResponse("Password reset successfully");
     }
 }

@@ -1,13 +1,17 @@
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import "tw-animate-css"; /* For animations */
+
+/* Jakarta Sans font with multiple weights */
 @import "@fontsource/plus-jakarta-sans/400.css";
 @import "@fontsource/plus-jakarta-sans/500.css";
 @import "@fontsource/plus-jakarta-sans/600.css";
 @import "@fontsource/plus-jakarta-sans/700.css";
+
+/* tailwind directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* shadcn base vars for all components*/
 @layer base {
   :root {
     --background: 210 20% 98%;
@@ -29,7 +33,7 @@
     --ring: 218 82% 23%;
     --radius: 0.75rem;
   }
-
+  /* default body styles */
   body {
     @apply bg-background-page text-slate-900;
     font-family: "Plus Jakarta Sans", sans-serif;
@@ -37,24 +41,238 @@
 }
 
 @layer components {
+  /* component styles */
+  
+  /* Page shell that wraps all pages with same max-width and horizontal centering */
+  .sncft-page-shell {
+    @apply flex flex-col flex-1 w-full mx-auto;
+  } 
+
+  /* Standard page width constraint for most list/table pages */
+  .sncft-page-content {
+    @apply max-w-6xl px-4 md:px-8;
+  }
+
+  /* Wide layout for data-dense pages to accommodate wider tables with many columns */
+  .sncft-page-content-wide {
+    @apply max-w-[1440px] px-4 md:px-8;
+  }
+
+  /* Page header wrapper with minimal vertical spacing between title and subtitle */
+  .sncft-page-header {
+    @apply space-y-1;
+  }
+
+  /* Primary page title — applied consistently across all page headers */
+  .sncft-page-title {
+    @apply text-2xl font-black tracking-tight text-slate-900 dark:text-white;
+  }
+
+  /* Subtitle/description under the main title */
+  .sncft-page-subtitle {
+    @apply text-sm font-medium text-slate-500 dark:text-slate-400;
+  }
+
+  /* Main section spacing — creates vertical rhythm between page blocks */
+  .sncft-page-section {
+    @apply space-y-6;
+  }
+
+  /* Tabs */
+  .sncft-tabs {
+    @apply flex items-center gap-8 border-b border-slate-200 dark:border-slate-800;
+  }
+
+  .sncft-tab {
+    @apply flex flex-col items-center justify-center border-b-[3px] pb-3 pt-4 text-sm font-bold uppercase tracking-wider transition-colors;
+  }
+
+  .sncft-tab-active {
+    @apply border-primary text-primary;
+  }
+
+  .sncft-tab-inactive {
+    @apply border-transparent text-slate-500 dark:text-slate-400 hover:text-primary;
+  }
+
+  /* Admin  tab variant */
+  .sncft-tabs-admin {
+    @apply flex p-1 bg-slate-100 dark:bg-slate-800/50 rounded-xl w-fit border border-slate-200 dark:border-slate-700 items-center gap-2;
+  }
+
+  .sncft-tab-admin {
+    @apply flex items-center gap-2 px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all;
+  }
+
+  .sncft-tab-admin-active {
+    @apply bg-white dark:bg-slate-700 text-primary shadow-sm;
+  }
+
+  .sncft-tab-admin-inactive {
+    @apply text-slate-500 hover:text-slate-700 dark:hover:text-slate-300;
+  }
 
   /* Link Style */
   .sncft-link {
     @apply text-primary font-bold hover:underline transition-all;
   }
 
-  /* Nav Link Style */
+  /* Navigation link in header/sidebar — for top-level navigation items */
   .sncft-nav-link {
     @apply text-sm font-bold text-slate-900 hover:text-primary transition-colors;
   }
 
-  /* Label Style: Matching prototype clean look */
   .sncft-label {
     @apply text-sm font-semibold text-slate-700 mb-1.5 inline-block;
   }
 
-  /* Card Style: Using Surface Color */
+  /* Card container — used for data display blocks (subscriptions, trains, offers, etc.) */
   .sncft-card {
     @apply bg-surface rounded-2xl shadow-md border border-slate-100 overflow-hidden;
+  }
+
+  /* Date Input Style */
+  .sncft-date-input {
+    @apply flex h-12 w-full rounded-xl border border-slate-300 bg-slate-50 px-2 py-2 text-sm text-slate-900 transition-all placeholder:text-slate-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-800;
+  }
+
+  /* MODALS size classes 
+  
+     - small: ~24rem (simple confirmations)
+     - medium: ~28rem (standard forms - CreateStationModal, etc.)
+     - large: ~32rem (larger forms - CreateLineModal)
+     - xl: ~36rem (complex multi-step forms - CreateScheduleModal)
+  */
+
+  .sncft-modal-small {
+    @apply max-w-sm;
+  }
+
+  .sncft-modal-medium {
+    @apply max-w-md;
+  }
+
+  .sncft-modal-large {
+    @apply max-w-lg;
+  }
+
+  .sncft-modal-xl {
+    @apply max-w-xl;
+  }
+
+  /* Modal internal spacing — used inside DialogHeader, DialogDescription, etc. */
+  .sncft-modal-header {
+    @apply space-y-2;
+  }
+
+  .sncft-modal-body {
+    @apply space-y-4;
+  }
+
+  .sncft-modal-footer {
+    @apply pt-4 flex gap-2 justify-end;
+  }
+
+  /* Modal typography — consistent heading and description styling across all modals */
+  .sncft-modal-title {
+    @apply text-xl font-bold text-slate-900 dark:text-white;
+  }
+
+  .sncft-modal-description {
+    @apply text-sm text-slate-600 dark:text-slate-400;
+  }
+
+  /* FORM CONTROL — Inputs, labels, and error messages used in modals  */
+
+  .sncft-form-field {
+    @apply space-y-2;
+  }
+
+  /* Form field label — consistent sizing and weight across all modal forms */
+  .sncft-form-label {
+    @apply text-sm font-semibold text-slate-700 dark:text-slate-300;
+  }
+
+  /* Form input field — standardized height, borders, and focus states */
+  .sncft-form-input {
+    @apply h-10 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-800 dark:border-slate-600;
+  }
+
+  /* Form validation error message — red accent for form validation feedback */
+  .sncft-form-error {
+    @apply text-xs font-medium text-red-500;
+  }
+
+  /* BUTTON styling */
+
+  /* Button group for horizontal layout (gap between items) */
+  .sncft-button-group {
+    @apply flex gap-2 items-center;
+  }
+
+  /* Stacked button group for vertical layout (e.g., multiple actions in a modal) */
+  .sncft-button-group-stacked {
+    @apply flex flex-col gap-2;
+  }
+
+
+  /* HEADING & TYPOGRAPHY 
+  
+     Naming: sncft-heading-{size} where:
+     - xl: 2xl font-black (large headings, main titles)
+     - lg: xl font-black (section titles)
+     - md: lg font-bold (subsection/item names)
+  */
+
+  /* Large heading — 2xl black, used for major section titles */
+  .sncft-heading-xl {
+    @apply text-2xl font-black text-slate-900 dark:text-white;
+  }
+
+  /* Large heading with uppercase — for important headings */
+  .sncft-heading-xl-uppercase {
+    @apply text-2xl font-black text-slate-900 dark:text-white uppercase;
+  }
+
+  /* Section title heading — xl black, used for subsection titles */
+  .sncft-heading-lg {
+    @apply text-xl font-black text-slate-900 dark:text-white;
+  }
+
+  /* Subsection/item heading — lg bold, used for individual item names in lists */
+  .sncft-heading-md {
+    @apply text-lg font-bold text-slate-900 dark:text-white;
+  }
+
+  /* TABLE  — Consistent table styling across all data tables
+     Applied to: Infrastructure tables (stations, trains, lines), Staff table, etc. */
+
+  .sncft-table {
+    @apply w-full caption-bottom text-sm;
+  }
+
+  /* Table header row background and borders */
+  .sncft-table-header {
+    @apply bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800;
+  }
+
+  /* Table body container — vertical divider between rows */
+  .sncft-table-body {
+    @apply divide-y divide-slate-100 dark:divide-slate-800;
+  }
+
+  /* Individual table row — with hover state for interactivity */
+  .sncft-table-row {
+    @apply border-b border-slate-200 dark:border-slate-800 transition-colors hover:bg-slate-50 dark:hover:bg-slate-800/50;
+  }
+
+  /* Table header cell — column labels with uppercase styling */
+  .sncft-table-head {
+    @apply h-12 px-6 text-left align-middle font-black uppercase tracking-wider text-[10px] text-slate-500 whitespace-nowrap;
+  }
+
+  /* Table data cell — consistent padding and text alignment */
+  .sncft-table-cell {
+    @apply px-6 py-2 align-middle whitespace-nowrap text-slate-900 dark:text-white;
   }
 }

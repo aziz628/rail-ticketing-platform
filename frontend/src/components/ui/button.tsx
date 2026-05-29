@@ -13,6 +13,9 @@ const buttonVariants = cva(
         ghost: "hover:bg-slate-100 text-slate-900",
         link: "text-primary underline-offset-4 hover:underline",
         "primary-sncft": "bg-primary text-white rounded-xl shadow-md hover:bg-primary/90",
+        danger: "bg-red-600 hover:bg-red-700 text-white border-none",
+        deactivate: "bg-amber-500 text-white border-none",
+        secondary: "bg-gray-600 hover:bg-gray-700 text-white border-none",
       },
       size: {
         default: "h-12 px-8 py-2",

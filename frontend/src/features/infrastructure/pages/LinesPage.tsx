@@ -8,7 +8,7 @@ import { RotatingLoader } from '@/components/ui/rotating-loader';
 import { useNotifications } from '@/stores/notifications-store';
 import { LoadMoreButton } from '@/components/common/LoadMoreButton';
 import { PrivateLayout } from '@/components/layouts/PrivateLayout';
-import { useAuthStore } from '@/features/auth/stores/auth';
+import { useAuthStore } from '@/stores/auth';
 import { useNavigation } from '@/hooks/use-navigation';
 import { cn } from '@/lib/utils';
 import { ConfirmationModal } from '@/components/common/ConfirmationModal';
@@ -88,13 +88,13 @@ export const LinesPage = () => {
 
   return (
     <PrivateLayout navItems={navItems} user={user!}>
-      <div className="w-full space-y-6">
+      <div className="sncft-page-shell sncft-page-content sncft-page-section">
 
         {/* Header section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Lignes Ferroviaires</h2>
-            <p className="text-sm text-slate-500 mt-1">Les lignes sont des parcours immuables de gares.</p>
+          <div className="sncft-page-header">
+            <h1 className="sncft-page-title">Lignes Ferroviaires</h1>
+            <p className="sncft-page-subtitle">Les lignes sont des parcours immuables de gares.</p>
           </div>
           <Button 
             onClick={handleOpenCreateModal}
@@ -123,7 +123,7 @@ export const LinesPage = () => {
                   {/* line details */}
                   <div className="flex items-center gap-4">
                     <div>
-                      <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
+                      <h3 className="sncft-heading-md group-hover:text-primary transition-colors">
                         {line.name}
                       </h3>
                       {/* line nodes count and total km */}
@@ -150,6 +150,7 @@ export const LinesPage = () => {
                   <Button
                     variant="ghost"
                     size="icon"
+                    disabled={!line?.canDelete}
                     onClick={(e) => {
                       e.stopPropagation();
                       setSelectedLine(line);
@@ -215,7 +216,7 @@ export const LinesPage = () => {
             <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
               <Route className="h-8 w-8 text-slate-300" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">Aucune ligne trouvée</h3>
+            <h3 className="sncft-heading-md">Aucune ligne trouvée</h3>
             <p className="text-sm text-slate-500 mt-1 max-w-xs mx-auto">
               Commencez par créer votre première ligne ferroviaire.
             </p>

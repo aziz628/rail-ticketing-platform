@@ -173,7 +173,7 @@ export const authHandlers = [
         { status: 404 }
       );
     }
-
+    // store mock otp for testing reset password
     mockOtps.set(email.toLowerCase(), {
       code: RESET_OTP,
       expiresAt: Date.now() + 15 * 60 * 1000,

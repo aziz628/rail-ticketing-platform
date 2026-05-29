@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sncft.app.shared.dto.PaginatedResponse;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
