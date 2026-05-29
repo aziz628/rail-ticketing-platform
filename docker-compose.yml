@@ -53,6 +53,9 @@ services:
       - backend
     profiles:
       - full   # only starts with: docker compose --profile full up
+      # when running app for the first time and build run this command : 
+      # docker compose --profile full up --build
+      
 
 volumes: 
   pgdata:
