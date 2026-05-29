@@ -60,7 +60,8 @@ npm run dev
 #### Option B: Full Docker Mode
 Spin up the entire stack (Database, Backend, Frontend, and Nginx proxy) via Docker:
 ```bash
-docker-compose up --build
+docker compose --profile full up --build
+
 ```
 
 ## Testing
