@@ -22,7 +22,25 @@ core administrative foundations of the platform:
 - Java 21 (for Hybrid Dev)
 - Node.js 20+ (for Hybrid Dev)
 
-### 2. Hybrid Mode (Recommended for Development)
+### 2. Configuration (Crucial)
+Before running the application, you must configure the backend properties:
+1. Navigate to the backend resources directory:
+   ```bash
+   cd backend/src/main/resources
+   ```
+2. Copy the example configuration file:
+   ```bash
+   cp application.properties.example application.properties
+   ```
+3. Open `application.properties` and add your Mailtrap credentials (for sending emails):
+   ```properties
+   spring.mail.username=your_mailtrap_username
+   spring.mail.password=your_mailtrap_password
+   ```
+
+### 3. Setup Modes
+
+#### Option A: Hybrid Mode (Recommended for Development)
 1. Start only the databases (Postgres & Redis):
 ```bash
 docker-compose up postgres redis -d
@@ -39,7 +57,7 @@ npm install
 npm run dev
 ```
 
-### 3. Full Docker Mode
+#### Option B: Full Docker Mode
 Spin up the entire stack (Database, Backend, Frontend, and Nginx proxy) via Docker:
 ```bash
 docker-compose up --build

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { subscriptionKeys } from '@/features/subscriptions/api/use-subscriptions';
+import { ticketsKeys } from '@/features/ticketing/api/use-tickets';
 import { queryPolicies } from '../../../lib/query-policies';
 import { pspApi, type PspPayRequest, type PaymentTargetType } from './psp';
 
@@ -27,6 +28,9 @@ export const useProcessPayment = () => {
     onSuccess: (_, request) => {
       if (request.targetType === 'SUBSCRIPTION') {
         queryClient.invalidateQueries({ queryKey: subscriptionKeys.all });
+      }
+      else if (request.targetType === 'TICKET') {
+        queryClient.invalidateQueries({ queryKey: ticketsKeys.all });
       }
     },
   });
