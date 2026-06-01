@@ -1,10 +1,13 @@
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { staffApi } from './staff';
+import { fetchAllPages } from '@/lib/api-utils';
+import type { Controller } from '../types';
 
 export const staffKeys = {
   all: ['staff'] as const,
   agents: () => [...staffKeys.all, 'agents'] as const,
   controllers: () => [...staffKeys.all, 'controllers'] as const,
+  controllersAll: () => [...staffKeys.all, 'controllers-all'] as const,
 };
 
 export const useAgents = () => {
@@ -26,6 +29,13 @@ export const useControllers = () => {
     getNextPageParam: (lastPage, allPages) => {
       return lastPage.last ? undefined : allPages.length;
     },
+  });
+};
+
+export const useAllControllers = () => {
+  return useQuery({
+    queryKey: staffKeys.controllersAll(),
+    queryFn: () => fetchAllPages<Controller>(staffApi.getControllers),
   });
 };
 

@@ -50,7 +50,7 @@ public class AuthService {
         this.clientRestrictionRepository = clientRestrictionRepository;
     }
 
-    public UserResponse register(AuthRegisterRequest request) {
+    public UserResponse register(AuthRegisterRequest request, HttpServletRequest httpRequest) {
         GovIdentity identity = govValidationService.validateIdentity(request.nationalIdType().name(), request.nationalIdNumber());
 
         if (userRepository.existsByNationalIdNumber(request.nationalIdNumber())) {
@@ -82,6 +82,9 @@ public class AuthService {
                 .build());
         }
 
+        // Automatically log the user in after registration
+        authenticate(request.email(), request.password(), httpRequest);
+
         return userMapper.toResponse(savedUser);
     }
 
@@ -93,7 +96,7 @@ public class AuthService {
             throw new AccessDeniedException("Clients uniquement. Veuillez utiliser le portail du personnel.");
         }
 
-        authenticate(request, httpRequest);
+        authenticate(request.email(), request.password(), httpRequest);
         return userMapper.toResponse(user);
     }
 
@@ -105,7 +108,7 @@ public class AuthService {
             throw new AccessDeniedException("Personnel uniquement. Veuillez utiliser le portail client.");
         }
 
-        authenticate(request, httpRequest);
+        authenticate(request.email(), request.password(), httpRequest);
         return userMapper.toResponse(user);
     }
 
@@ -114,10 +117,10 @@ public class AuthService {
      * which will persist for the duration of the HTTP session. 
      * 
      */
-    private void authenticate(AuthLoginRequest request, HttpServletRequest httpRequest) {
+    private void authenticate(String email, String password, HttpServletRequest httpRequest) {
         // checks the database for the user
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+                new UsernamePasswordAuthenticationToken(email, password)
         );
         // set the user's authentication in the security context for the duration of the HTTP session
         SecurityContextHolder.getContext().setAuthentication(authentication);

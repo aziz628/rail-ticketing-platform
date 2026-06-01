@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -20,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useCreateController } from '../api/use-staff';
-import { useLines } from '@/features/infrastructure/api/use-infrastructure';
+import { useAllLines } from '@/features/infrastructure/api/use-infrastructure';
 import { useNotifications } from '@/stores/notifications-store';
 import { cn } from '@/lib/utils';
 import type { Line } from '@/features/infrastructure/types';
@@ -33,12 +32,8 @@ interface CreateControllerModalProps {
 
 export const CreateControllerModal = ({ isOpen, onClose }: CreateControllerModalProps) => {
   const createController = useCreateController();
-  const { data: linesData } = useLines();
+  const { data: lines = [] } = useAllLines();
   const addNotification = useNotifications((state) => state.addNotification);
-
-  const lines = React.useMemo(() => {
-    return linesData?.pages.flatMap((page) => page.content) || [];
-  }, [linesData]);
 
   const selectItems = selectItemsGenerator<Line>(lines);
 

@@ -1,18 +1,18 @@
 package com.sncft.app.shared.setup;
 
-import com.sncft.app.infrastructure.train.SeatClass;
-import com.sncft.app.infrastructure.train.SeatClassType;
 import com.sncft.app.infrastructure.line.Line;
 import com.sncft.app.infrastructure.line.LineNode;
 import com.sncft.app.infrastructure.line.LineRepository;
 import com.sncft.app.infrastructure.station.Station;
 import com.sncft.app.infrastructure.station.StationRepository;
+import com.sncft.app.infrastructure.train.SeatClass;
+import com.sncft.app.infrastructure.train.SeatClassType;
 import com.sncft.app.infrastructure.train.Train;
 import com.sncft.app.infrastructure.train.TrainRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Component
-@Order(2) // After AdminSeeder
+@Order(2)
 @RequiredArgsConstructor
 @Slf4j
 @Profile("!test")
@@ -32,68 +32,57 @@ public class InfrastructureSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (stationRepository.count() == 0) {
-            log.info("Seeding Tunisian stations...");
-            List<String> stations = List.of(
-                "Tunis Ville", "Sousse", "Sfax", "Gabes", 
-                "Monastir", "Mahdia", "Bizerte", "Nabeul",
-                "Kalaat Khasba", "Metlaoui", "Tozeur"
-            );
-            stations.forEach(name -> stationRepository.save(Station.builder().name(name).build()));
-            log.info("Stations seeded successfully.");
-        }
-
-        if (trainRepository.count() == 0) {
-            log.info("Seeding sample trains...");
-            
-            // Train Express (3 classes)
-            Train express = Train.builder()
-                .name("EXP")
-                .basePriceIncreasePercentage(new BigDecimal("10.0"))
-                .build();
-            express.addSeatClass(createSeatClass(SeatClassType.SECOND, 120, "0.0"));
-            express.addSeatClass(createSeatClass(SeatClassType.FIRST, 60, "20.0"));
-            express.addSeatClass(createSeatClass(SeatClassType.COMFORT, 20, "50.0"));
-            trainRepository.save(express);
-            
-            // Train Regional (2 classes)
-            Train regional = Train.builder()
-                .name("DC")
-                .basePriceIncreasePercentage(BigDecimal.ZERO)
-                .build();
-            regional.addSeatClass(createSeatClass(SeatClassType.SECOND, 200, "0.0"));
-            regional.addSeatClass(createSeatClass(SeatClassType.FIRST, 40, "15.0"));
-            trainRepository.save(regional);
-
-            log.info("Trains seeded successfully.");
-        }
-
-        if (lineRepository.count() == 0) {
-            log.info("Seeding sample lines...");
-            
-            // Tunis Ville to Gabes via Sousse
-            Line tunisGabes = Line.builder()
-                    .name("Tunis-Gabes Express")
-                    .build();
-
-            Station tunis = stationRepository.findByNameIgnoreCase("Tunis Ville")
-                    .orElseThrow(() -> new RuntimeException("Station 'Tunis Ville' not found"));
-            Station sousse = stationRepository.findByNameIgnoreCase("Sousse")
-                    .orElseThrow(() -> new RuntimeException("Station 'Sousse' not found"));
-            Station gabes = stationRepository.findByNameIgnoreCase("Gabes")
-                    .orElseThrow(() -> new RuntimeException("Station 'Gabes' not found"));
-
-            tunisGabes.addNode(LineNode.builder().station(tunis).kmFromSource(0.0).orderIndex(0).build());
-            tunisGabes.addNode(LineNode.builder().station(sousse).kmFromSource(140.0).orderIndex(1).build());
-            tunisGabes.addNode(LineNode.builder().station(gabes).kmFromSource(300.0).orderIndex(2).build());
-            
-            lineRepository.save(tunisGabes);
-            log.info("Lines seeded successfully.");
-        }
-
+        seedStations();
+        seedTrains();
+        seedLines();
     }
 
-    
+    private void seedStations() {
+        if (stationRepository.count() > 0) return;
+        log.info("Seeding stations...");
+        // Line 1 stations
+        List.of("Tunis", "Bir Bou Regba", "Sousse", "Sfax", "Gabes", "Gafsa", "Metlaoui", "Tozeur",
+                // Line 2 stations (ready to build in demo)
+                "Gaafour", "Dahmani", "Le Kef", "Kalaa Khasba")
+            .forEach(name -> stationRepository.save(Station.builder().name(name).build()));
+        log.info("Stations seeded.");
+    }
+
+    private void seedTrains() {
+        if (trainRepository.count() > 0) return;
+        log.info("Seeding trains...");
+
+        // Direct (10 seats) — the demo train that gets "almost full"
+        Train direct = Train.builder()
+                .name("Direct Climatisé")
+                .basePriceIncreasePercentage(BigDecimal.ZERO)
+                .build();
+        direct.addSeatClass(createSeatClass(SeatClassType.SECOND, 10, "0.0"));
+        trainRepository.save(direct);
+
+        log.info("Train 'Direct Climatisé' (10 seats) seeded. Express created live in demo.");
+    }
+
+    private void seedLines() {
+        if (lineRepository.count() > 0) return;
+        log.info("Seeding Line 1: Tunis — Tozeur...");
+
+        Line line1 = Line.builder().name("Tunis — Tozeur").build();
+
+        String[] nodeNames = {"Tunis", "Bir Bou Regba", "Sousse", "Sfax", "Gabes", "Gafsa", "Metlaoui", "Tozeur"};
+        double[] kms      = { 0.0, 65.0, 140.0, 270.0, 395.0, 470.0, 530.0, 570.0};
+
+        for (int i = 0; i < nodeNames.length; i++) {
+            final int idx = i;
+            Station station = stationRepository.findByNameIgnoreCase(nodeNames[i])
+                    .orElseThrow(() -> new RuntimeException("Station not found: " + nodeNames[idx]));
+            line1.addNode(LineNode.builder()
+                    .station(station).kmFromSource(kms[i]).orderIndex(i).build());
+        }
+
+        lineRepository.save(line1);
+        log.info("Line 1 seeded. Line 2 built live in demo.");
+    }
 
     private SeatClass createSeatClass(SeatClassType type, int capacity, String increase) {
         return SeatClass.builder()
@@ -102,5 +91,4 @@ public class InfrastructureSeeder implements CommandLineRunner {
                 .priceIncreasePercentage(new BigDecimal(increase))
                 .build();
     }
-
 }

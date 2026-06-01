@@ -6,7 +6,7 @@ const loginAsAdmin = async (page: Page) => {
   await page.fill('input[name="email"]', 'admin@example.com');
   await page.fill('input[name="password"]', 'admin123');
   await page.click('button[type="submit"]');
-  await page.waitForURL(PATHS.ADMIN.TRIPS);
+  await page.waitForURL(PATHS.ADMIN.DASHBOARD);
   
 };
 

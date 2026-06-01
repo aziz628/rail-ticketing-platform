@@ -6,6 +6,7 @@ import { schedulesHandlers } from './handlers/schedules';
 import { tripsHandlers } from './handlers/trips';
 import { ticketsHandlers } from './handlers/tickets';
 import { subscriptionsHandlers } from './handlers/subscriptions';
+import { dashboardHandlers } from './handlers/dashboard';
 
 // Create an MSW worker with the defined request handlers
 export const worker = setupWorker(
@@ -15,5 +16,6 @@ export const worker = setupWorker(
   ...schedulesHandlers,
   ...tripsHandlers,
   ...ticketsHandlers,
-  ...subscriptionsHandlers
+  ...subscriptionsHandlers,
+  ...dashboardHandlers
 );

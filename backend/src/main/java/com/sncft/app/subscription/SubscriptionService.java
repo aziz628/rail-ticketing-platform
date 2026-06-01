@@ -89,7 +89,24 @@ public class SubscriptionService {
         String userLockKey = USER_LOCK_KEY_PREFIX + user.getId();
         String existingSession = redisTemplate.opsForValue().get(userLockKey);
         if (existingSession != null) {
-            return new PaymentInitiateResponse(UUID.fromString(existingSession));
+            // check if the existing session is for the same subscription
+            String contextJson = redisTemplate.opsForValue().get(SUBSCRIPTION_CONTEXT_KEY_PREFIX + existingSession);
+            if (contextJson != null) {
+                try {
+                    Map<String, String> sessionData = objectMapper.readValue(contextJson, new TypeReference<Map<String, String>>() {});
+                    UUID existingSubId = UUID.fromString(sessionData.get("subscriptionId"));
+                    if (existingSubId.equals(sub.getId())) {
+                        // if the existing session is for the same subscription, return the existing session id to avoid creating multiple sessions for the same subscription
+                        return new PaymentInitiateResponse(UUID.fromString(existingSession));
+                    }else{
+                        // if the existing session is for a different subscription, then error of unallowed to buy multiple subscriptions at same time
+                        throw new DataConflictException("vous ne pouvez pas acheter plusieurs abonnements en même temps.");
+                    }
+                } catch (JsonProcessingException e) {
+                    log.error("Failed to parse existing session data", e);
+                    // if parsing error, allow to create new session (fallback) but log the error for investigation
+                }
+            }
         }
 
         // Determine price

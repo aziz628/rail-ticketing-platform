@@ -3,7 +3,6 @@ package com.sncft.app.ticket;
 import com.sncft.app.user.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -44,7 +43,11 @@ public class Transaction {
     @Column(nullable = false, length = 20)
     private String status; // 'SUCCESS', 'FAILED', 'PENDING'
 
-    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private ZonedDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) createdAt = java.time.ZonedDateTime.now();
+    }
 }

@@ -7,7 +7,7 @@ const loginAsAdmin = async (page: any) => {
   await page.fill('input[name="password"]', 'admin123');
   await page.click('button[type="submit"]');
 
-  await page.waitForURL(PATHS.ADMIN.TRIPS);
+  await page.waitForURL(PATHS.ADMIN.DASHBOARD);
 };
 
 test.describe('Trips Management (Voyages) flows', () => {

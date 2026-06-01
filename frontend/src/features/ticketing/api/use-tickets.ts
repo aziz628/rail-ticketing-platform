@@ -1,6 +1,7 @@
 import { useInfiniteQuery, useQuery, useMutation } from '@tanstack/react-query';
 import { ticketsApi, type TicketFilter } from './tickets';
 import { queryPolicies } from '@/lib/query-policies';
+import { queryClient } from '@/lib/react-query';
 
 export const ticketsKeys = {
   all: ['tickets'] as const,
@@ -44,6 +45,11 @@ export const useBookFree = () => {
   return useMutation({
     mutationFn: (request: { tripId: string; originLineNodeId: string; destinationLineNodeId: string; seatClassId: string }) =>
       ticketsApi.bookFree(request),
+    onSuccess: () => {
+      // Invalidate tickets list to show the newly booked ticket
+      queryClient.invalidateQueries({ queryKey: ticketsKeys.lists() });
+    }
+    
   });
 };
 

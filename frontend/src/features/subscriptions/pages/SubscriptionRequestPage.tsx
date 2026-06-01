@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, selectItemsGenerator } from '@/components/ui/select';
 import { RotatingLoader } from '@/components/ui/rotating-loader';
-import { useLines } from '@/features/infrastructure/api/use-infrastructure';
+import { useAllLines } from '@/features/infrastructure/api/use-infrastructure';
 import { useCreateSubscriptionRequestMutation, useSubscriptionCategories } from '../api/use-subscriptions';
 import { SUBSCRIPTION_CATEGORY_LABELS } from '../constants/translations';
 import { subscriptionRequestSchema, type SubscriptionRequestFormValues } from '../schemas';
@@ -58,10 +58,9 @@ export const SubscriptionRequestPage = () => {
     : 'UNIVERSITAIRE';
 
   const { data: categories, isLoading: isLoadingCategories } = useSubscriptionCategories();
-  const { data: linesData, isLoading: isLoadingLines } = useLines();
+  const { data: lines = [], isLoading: isLoadingLines } = useAllLines();
   const createRequest = useCreateSubscriptionRequestMutation();
 
-  const lines = React.useMemo(() => linesData?.pages.flatMap((page) => page.content) || [], [linesData]);
   const lineItems = selectItemsGenerator(lines);
 
   const selectedCategory = React.useMemo(() => {

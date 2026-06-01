@@ -155,6 +155,7 @@ export const useLogoutMutation = () => {
     mutationFn: authApi.logout,
     onSuccess: () => {
       logout();
+      // on logout remove all queries don't leave a single cached data of the previous logged in user
       queryClient.removeQueries({ queryKey: authKeys.me });
       addNotification({
         type: 'success',

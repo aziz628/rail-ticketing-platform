@@ -117,18 +117,36 @@ public class TicketService {
 
         checkUserRestrictions(user);
 
+        // Fetch and Validate Trip
+        Trip trip = tripRepository.findById(request.tripId())
+                .orElseThrow(() -> new ResourceNotFoundException("Voyage non trouvé"));
+
         // Check for existing locks
         String userLockKey = USER_LOCK_KEY_PREFIX + user.getId();
         String existingSessionId = redisTemplate.opsForValue().get(userLockKey);
 
         // check if the session is of the selected trip
         if (existingSessionId != null) {
-            return new PaymentInitiateResponse(UUID.fromString(existingSessionId));
+            // get context and check if the session is for the same trip
+            String contextJson = redisTemplate.opsForValue().get(BOOKING_CONTEXT_KEY_PREFIX + existingSessionId);
+            if (contextJson != null) {
+                try {
+                    Map<String, String> sessionData = objectMapper.readValue(contextJson, new TypeReference<Map<String, String>>() {});
+                    UUID existingTripId = UUID.fromString(sessionData.get("tripId"));
+                    if (existingTripId.equals(trip.getId())) {
+                        // if the existing session is for the same trip, return the existing session id to avoid creating multiple sessions for the same trip
+                        return new PaymentInitiateResponse(UUID.fromString(existingSessionId));
+                    }else{
+                        // if the existing session is for a different trip, then error of unallowed to buy multiple tickets for different trips at same time
+                        throw new DataConflictException("vous ne pouvez pas acheter des billets pour plusieurs voyages en même temps.");
+                    }
+                } catch (JsonProcessingException e) {
+                    log.error("Failed to parse existing session data", e);
+                    // if failed to parse session data, proceed with creating a new session
+                }
+            }
         }
 
-        // Fetch and Validate Trip
-        Trip trip = tripRepository.findById(request.tripId())
-                .orElseThrow(() -> new ResourceNotFoundException("Voyage non trouvé"));
 
         /*  check if the selected trip is deleted (futur feature)
         if (trip.isDeleted()) {
@@ -246,8 +264,15 @@ public class TicketService {
             sa.setAvailableSeats(sa.getAvailableSeats() - 1);
         }
 
-        Station origin = stationRepository.findById(stopsInfo.originStop().getLineNode().getStation().getId()).orElseThrow();
-        Station dest = stationRepository.findById(stopsInfo.destStop().getLineNode().getStation().getId()).orElseThrow();
+
+
+
+        Station origin = stationRepository.findById(stopsInfo.originStop().getLineNode().getStation().getId()).orElseThrow(
+            () -> new ResourceNotFoundException("Gare de départ non trouvée")
+        );
+        Station dest = stationRepository.findById(stopsInfo.destStop().getLineNode().getStation().getId()).orElseThrow(
+            () -> new ResourceNotFoundException("Gare d'arrivée non trouvée")
+        );
 
         // Create Ticket
         Ticket ticket = Ticket.builder()
@@ -262,6 +287,10 @@ public class TicketService {
                 .deleted(false)
                 .build();
         ticketRepository.save(ticket);
+
+        // Increment trip ticket count
+        trip.setTicketCount(trip.getTicketCount() + 1);
+        tripRepository.save(trip);
 
         return ticketMapper.toResponse(ticket);
     }
@@ -417,20 +446,17 @@ public class TicketService {
         int originIdx = Integer.parseInt(sessionData.get("originIdx"));
         int destIdx = Integer.parseInt(sessionData.get("destIdx"));
 
-        User user = userRepository.findById(userId).orElseThrow();
-        Trip trip = tripRepository.findById(tripId).orElseThrow();
-        
-        // find segment availabilities of this partial trip and seat class
-        List<TripSegmentAvailability> segmentAvailabilities = trip.getSegmentAvailabilities().stream()
-                .filter(sa -> sa.getSeatClass().getId().equals(seatClassId) 
-                && sa.getSegmentOrder() >= originIdx && sa.getSegmentOrder() < destIdx)
-                .collect(Collectors.toList());
+        User user = userRepository.findById(userId).orElseThrow(
+            () -> new ResourceNotFoundException("Utilisateur non trouvé")
+        );
+        Trip trip = tripRepository.findById(tripId).orElseThrow(
+            () -> new ResourceNotFoundException("Voyage non trouvé")
+        );
 
-        // reduce one seat for each segment
-        for (TripSegmentAvailability sa : segmentAvailabilities) {
-            sa.setAvailableSeats(sa.getAvailableSeats() - 1);
+        // prevent race condition for duplicate finalization before making the booking
+        if (ticketRepository.existsByUserIdAndTripId(userId, tripId)) {
+            throw new DataConflictException("déjà acheté un billet pour ce voyage.");
         }
-
         Station origin = stationRepository.findById(originId).orElseThrow();
         Station dest = stationRepository.findById(destId).orElseThrow();
 
@@ -447,6 +473,23 @@ public class TicketService {
                 .build();
         ticketRepository.save(ticket);
 
+        // find segment availabilities of this partial trip and seat class
+        List<TripSegmentAvailability> segmentAvailabilities = trip.getSegmentAvailabilities().stream()
+                .filter(sa -> sa.getSeatClass().getId().equals(seatClassId) 
+                && sa.getSegmentOrder() >= originIdx && sa.getSegmentOrder() < destIdx)
+                .collect(Collectors.toList());
+
+        // reduce one seat for each segment
+        for (TripSegmentAvailability sa : segmentAvailabilities) {
+            sa.setAvailableSeats(sa.getAvailableSeats() - 1);
+        }
+
+        // Increment trip ticket count
+        trip.setTicketCount(trip.getTicketCount() + 1);
+        tripRepository.save(trip);
+
+ 
+
         // Create Transaction
         Transaction transaction = Transaction.builder()
                 .user(user)
@@ -459,7 +502,7 @@ public class TicketService {
                 .build();
         transactionRepository.save(transaction);
 
-        //  Cleanup Locks
+        // Cleanup Locks
         cleanupLocks(pspSessionId, userId, tripId, seatClassId, originIdx, destIdx);
     }
 
@@ -480,6 +523,7 @@ public class TicketService {
     public void handlePaymentFailure(UUID pspSessionId) {
         // get booking context from redis (try main then shadow fallback)
         String contextJson = redisTemplate.opsForValue().get(BOOKING_CONTEXT_KEY_PREFIX + pspSessionId);
+        // if main session context not found, try shadow session context (in case of payment failure after main session expired )
         if (contextJson == null) {
             contextJson = redisTemplate.opsForValue().get(SHADOW_SESSION_KEY_PREFIX + pspSessionId);
             if (contextJson == null) return;

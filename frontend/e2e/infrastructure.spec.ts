@@ -7,7 +7,7 @@ const loginAsAdmin = async (page: any) => {
   await page.fill('input[name="password"]', 'admin123');
   await page.click('button[type="submit"]');
 
-  await page.waitForURL(PATHS.ADMIN.TRIPS);
+  await page.waitForURL(PATHS.ADMIN.DASHBOARD);
   await expect(page.getByRole('banner')).toContainText('Administrateur');
 };
 
@@ -73,7 +73,7 @@ test.describe('Infrastructure flows (Admin)', () => {
     await page.click('button:has-text("Verrouiller & Créer")');
 
     // wait a second so that the validation message appears
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(1000);
     await expect(page.getByText('Les distances doivent être strictement croissantes')).toBeVisible();
 
     await page.click('button:has-text("Ajouter une gare intermédiaire")');

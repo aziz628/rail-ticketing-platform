@@ -7,7 +7,6 @@ import com.sncft.app.trip.Trip;
 import com.sncft.app.user.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -58,9 +57,13 @@ public class Ticket {
     @JoinColumn(name = "subscription_id", nullable = true)
     private Subscription subscription;
 
-    @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private ZonedDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) createdAt = java.time.ZonedDateTime.now();
+    }
 
     @Column(name = "is_deleted")
     private boolean deleted;

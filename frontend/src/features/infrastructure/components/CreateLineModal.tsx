@@ -1,9 +1,8 @@
-import * as React from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus,  X } from 'lucide-react';
 import { lineSchema } from '../schemas';
-import { useCreateLine, useStations } from '../api/use-infrastructure';
+import { useCreateLine, useAllStations } from '../api/use-infrastructure';
 import {
   Dialog,
   DialogContent,
@@ -28,13 +27,8 @@ interface CreateLineModalProps {
 
 export const CreateLineModal = ({ isOpen, onClose }: CreateLineModalProps) => {
   const createLine = useCreateLine();
-  const { data: stationsData } = useStations();
+  const { data: stations = [] } = useAllStations();
   const addNotification = useNotifications((state) => state.addNotification);
-
-  // flatmap to get all stations in a single array
-  const stations = React.useMemo(() => {
-    return stationsData?.pages.flatMap((page) => page.content) || [];
-  }, [stationsData]);
 
   // use react hook form for form handling and zod resolver for presubmit validation
   const {

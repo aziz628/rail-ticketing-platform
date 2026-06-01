@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Plus, Trash2, ChevronDown, Route } from 'lucide-react';
-import { useLines, useDeleteLine, useStations } from '../api/use-infrastructure';
+import { useLines, useDeleteLine, useAllStations } from '../api/use-infrastructure';
 import type { Line } from '../types';
 import { CreateLineModal } from '../components/CreateLineModal';
 import { Button } from '@/components/ui/button';
@@ -25,10 +25,8 @@ export const LinesPage = () => {
   } = useLines();
   
   // Need stations count for modal access rule
-  const { data: stationsData } = useStations();
-  const totalStations = React.useMemo(() => {
-    return stationsData?.pages.flatMap(p => p.content).length || 0;
-  }, [stationsData]);
+  const { data: stations = [] } = useAllStations();
+  const totalStations = stations.length;
 
   const deleteLine = useDeleteLine();
   const addNotification = useNotifications((state) => state.addNotification);

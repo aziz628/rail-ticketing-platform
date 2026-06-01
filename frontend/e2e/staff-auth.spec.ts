@@ -15,7 +15,7 @@ test.describe('Staff Auth flows with MSW worker', () => {
     const loginResponse = await loginResponsePromise;
     expect(loginResponse.status()).toBe(200);
 
-    await page.waitForURL(PATHS.ADMIN.TRIPS,{timeout:5000});
+    await page.waitForURL(PATHS.ADMIN.DASHBOARD,{timeout:5000});
     
     // navigate to profile to verify data
     await page.getByRole('link', { name: 'Profile' }).click();

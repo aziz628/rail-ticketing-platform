@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Plus, Clock, History, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Select, selectItemsGenerator, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useLines } from '@/features/infrastructure/api/use-infrastructure';
+import { useAllLines } from '@/features/infrastructure/api/use-infrastructure';
 import { SchedulesTable } from '../components/SchedulesTable';
 import { CreateScheduleModal } from '../components/CreateScheduleModal';
 import { ReassignControllerModal } from '../components/ReassignControllerModal';
@@ -37,9 +37,7 @@ export function SchedulesPage() {
   const [deleteTarget, setDeleteTarget] = React.useState<Schedule | null>(null);
 
   // Data fetching
-  const { data: linesData } = useLines();
-  // flatten the data in one array
-  const lines = React.useMemo(() => linesData?.pages.flatMap(p => p.content) || [], [linesData]);
+  const { data: lines = [] } = useAllLines();
   // lines as items for the select component
   const linesItems = [{ value: "", label: "Toutes les lignes" }, ...selectItemsGenerator<Line>(lines)] 
 

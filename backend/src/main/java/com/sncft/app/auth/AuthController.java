@@ -23,10 +23,10 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public UserResponse register(@Valid @RequestBody AuthRegisterRequest request) {
-        return authService.register(request);
+    public UserResponse register(@Valid @RequestBody AuthRegisterRequest request, HttpServletRequest httpRequest) {
+        return authService.register(request, httpRequest);
     }
-
+ 
     @PostMapping("/login")
     public UserResponse login(@Valid @RequestBody AuthLoginRequest request, HttpServletRequest httpRequest) {
         return authService.login(request, httpRequest);

@@ -40,6 +40,10 @@ export const TicketDetailsPage = () => {
     destinationId,
   });
 
+  const isTripFull = React.useMemo(() => {
+    return booking?.seatClasses?.every((sc: SeatClassPriceResponse) => !sc.available);
+  }, [booking]);
+
   const initiatePayment = useInitiatePayment();
   const bookFree = useBookFree();
   const [selectedClassId, setSelectedClassId] = React.useState<string | null>(null);
@@ -174,7 +178,7 @@ export const TicketDetailsPage = () => {
                      <Train className="h-6 w-6 text-primary shrink-0" />
                      <div className="h-0.5 flex-1 bg-slate-100 dark:bg-slate-800" />
                    </div>
-                   <span className="text-[10px] font-bold text-slate-400 mt-2">{booking.trainName}</span>
+                   <span className="text-[14px] font-bold text-slate-400 mt-2">{booking.trainName}</span>
                 </div>
                 <div className="space-y-1 text-center md:text-right">
                   <p className="sncft-heading-lg uppercase tracking-tighter">{booking.destinationName}</p>
@@ -251,7 +255,8 @@ export const TicketDetailsPage = () => {
             <Card className="bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 p-8 shadow-xl shadow-slate-200/50 dark:shadow-none space-y-6 sticky top-24 rounded-3xl">
               <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-widest">Récapitulatif</h3>
               
-              <div className="space-y-4">
+              {!isTripFull &&  (
+              <div className="space-y-4"> 
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-400 font-bold">Prix de base</span>
                   <span className="text-slate-900 dark:text-white font-black">{selectedClass?.basePrice.toFixed(2)} DT</span>
@@ -278,10 +283,15 @@ export const TicketDetailsPage = () => {
                     <span className="text-sm font-bold text-slate-400 uppercase">DT</span>
                   </div>
                 </div>
-              </div>
+              </div>) }
 
               <div className="space-y-3 pt-4">
-                {!isAuthenticated ? (
+                {isTripFull ? (
+                  <div className="p-4 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-900/30 rounded-2xl text-orange-700 dark:text-orange-400 flex gap-3">
+                    <ShieldAlert className="h-5 w-5 shrink-0" />
+                    <p className="text-xs font-bold leading-relaxed">Ce trajet est complet. Aucune place disponible .</p>
+                  </div>
+                ) : !isAuthenticated ? (
                   <div className="space-y-3">
                     <Button 
                       onClick={() => navigate(PATHS.VOYAGER.LOGIN)}
@@ -308,7 +318,7 @@ export const TicketDetailsPage = () => {
                 : booking?.freeBookingAllowed ? 
                       <Button 
                         onClick={() => handlePurchase(true)}
-                        disabled={bookFree.isPending}
+                        disabled={bookFree.isPending || !selectedClassId}
                         variant='outline'
                         className="w-full h-14 border-green-200 text-green-700 hover:bg-green-50 dark:border-green-900/30 dark:text-green-400 dark:hover:bg-green-900/20"
                       >
@@ -321,7 +331,7 @@ export const TicketDetailsPage = () => {
                     :
                     <Button 
                       onClick={() => handlePurchase(false)}
-                      disabled={initiatePayment.isPending || bookFree.isPending}
+                      disabled={initiatePayment.isPending || bookFree.isPending || !selectedClassId}
                       variant='default'
                       className="w-full h-14"
                     >

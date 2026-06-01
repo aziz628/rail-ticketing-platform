@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8" />
@@ -156,7 +155,8 @@
             width: 300px;
             height: 300px;
             border: 2px solid #333;
-            display: inline-block;
+            display: block;
+            margin: 0 auto;
             padding: 15px;
             background-color: white;
         }
@@ -188,31 +188,6 @@
             font-size: 14px;
         }
 
-        /* Passenger Info */
-        .passenger-info {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-        }
-
-        .passenger-info-title {
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .passenger-details {
-            font-size: 13px;
-        }
-
-        .passenger-details .detail-row {
-            grid-template-columns: auto 1fr;
-            margin-bottom: 5px;
-        }
-
         /* Price Section */
         .price-section {
             background-color: #e8e8e8;
@@ -237,15 +212,6 @@
             color: #333;
         }
 
-
-
-        /* Responsive (Note: PDF renderer may not support this, so we use a robust base layout) */
-        @media (max-width: 600px) {
-            .ticket-container {
-                padding: 10px;
-            }
-        }
-
         /* Print styles */
         @media print {
             body {
@@ -255,7 +221,6 @@
             .ticket-container {
                 max-width: 100%;
                 border: none;
-                box-shadow: none;
             }
         }
     </style>
@@ -270,7 +235,7 @@
         <!-- Main Content -->
         <table class="ticket-content">
             <!-- QR Code Section with extra margin -->
-            <tr style="display: flex; justify-content: center;  margin-bottom: 20px;">
+            <tr>
                 <td class="qr-section-container">
                     <div class="qr-section">
                         <div class="qr-code">
@@ -312,7 +277,7 @@
                             </tr>
                             <tr>
                                 <td class="details-label">Classe :</td>
-                                <td class="details-value" th:text="${seatClass}">CONFORT</td>
+                                <td class="details-value" th:text="${seatClass == 'FIRST' ? '1ère Classe' : (seatClass == 'SECOND' ? '2ème Classe' : 'Confort')}">CONFORT</td>
                             </tr>
                             <tr>
                                 <td class="details-label">Train :</td>

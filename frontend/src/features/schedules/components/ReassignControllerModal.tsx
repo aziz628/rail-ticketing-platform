@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, selectItemsGenerator,SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { reassignControllerSchema, type ReassignControllerFormValues } from '../schemas';
-import { useControllers } from '@/features/staff/api/use-staff';
+import { useAllControllers } from '@/features/staff/api/use-staff';
 import { useReassignControllerMutation } from '../api/schedules';
 import { useNotifications } from '@/stores/notifications-store';
 import type { Schedule } from '../types';
@@ -27,10 +27,7 @@ interface ReassignControllerModalProps {
 export function ReassignControllerModal({ schedule, isOpen, onClose }: ReassignControllerModalProps) {
   const { addNotification } = useNotifications();
   const reassignMutation = useReassignControllerMutation();
-  const { data: controllersData } = useControllers();
-  const controllers = React.useMemo(() => 
-    controllersData?.pages.flatMap(p => p.content) || [],
-  [controllersData]);
+  const { data: controllers = [] } = useAllControllers();
   
   const controllerSelectItems = selectItemsGenerator<Controller>(controllers);
 

@@ -31,7 +31,8 @@ export function SchedulesTable({ schedules, onReassign, onDeactivate, onDelete, 
   if (schedules.length === 0) {
     return <div className="p-12 text-center text-slate-400 italic">Aucun horaire trouvé.</div>;
   }
-
+  // make the rows of deactivated schedules have slight grey background and the text to be greyed out
+ const isActivated = activeTab === 'ACTIVE';
   return (
     <div className="overflow-x-auto">
       <Table>
@@ -48,10 +49,18 @@ export function SchedulesTable({ schedules, onReassign, onDeactivate, onDelete, 
         </TableHeader>
         <TableBody>
           {schedules.map((schedule) => (
-            <TableRow key={schedule.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+            <TableRow
+              key={schedule.id}
+              className={cn(
+                "hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors",
+                !isActivated && "bg-slate-100 dark:bg-slate-800"
+              )}
+            >
               {/* Line Name */}
               <TableCell className="align-top pt-5">
-                <p className="font-bold text-slate-900 dark:text-white">{schedule.lineName}</p>
+                <p className={cn("font-bold", !isActivated && "text-slate-400 dark:text-slate-500")}>
+                  {schedule.lineName}
+                </p>
               </TableCell>
 
               {/* Train Type */}

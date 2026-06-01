@@ -16,6 +16,8 @@ export const usePspSession = (id: string) => {
     enabled: !!id,
     retry: false, // Don't retry if session not found
     ...queryPolicies.live,
+    // refresh interval once a min to prevent cache of internal navigation (even if rare) 
+    refetchInterval: 60 * 1000,
   });
 };
 

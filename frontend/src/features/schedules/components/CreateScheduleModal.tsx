@@ -15,8 +15,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { DatePicker } from '@/components/ui/date-picker';
 import { Select, selectItemsGenerator, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { createScheduleSchema, type CreateScheduleFormValues } from '../schemas';
-import { useLines, useTrains } from '@/features/infrastructure/api/use-infrastructure';
-import { useControllers } from '@/features/staff/api/use-staff';
+import { useAllLines, useAllTrains } from '@/features/infrastructure/api/use-infrastructure';
+import { useAllControllers } from '@/features/staff/api/use-staff';
 import { useCreateScheduleMutation } from '../api/schedules';
 import { useNotifications } from '@/stores/notifications-store';
 import type { Line, Train } from "@/features/infrastructure/types/index";
@@ -43,22 +43,9 @@ export function CreateScheduleModal({ isOpen, onClose }: CreateScheduleModalProp
   const addNotification = useNotifications((state) => state.addNotification);
   const createMutation = useCreateScheduleMutation();
 
-  const { data: linesData } = useLines();
-  const { data: trainsData } = useTrains();
-  const { data: controllersData } = useControllers();
-
-  // Memoize to prevent infinite re-renders from flatMap new array references
-  const lines = React.useMemo(() =>
-    linesData?.pages.flatMap(p => p.content) || [],
-  [linesData]);
-
-  const trains = React.useMemo(() =>
-    trainsData?.pages.flatMap(p => p.content) || [],
-  [trainsData]);
-
-  const controllers = React.useMemo(() =>
-    controllersData?.pages.flatMap(p => p.content) || [],
-  [controllersData]);
+  const { data: lines = [] } = useAllLines();
+  const { data: trains = [] } = useAllTrains();
+  const { data: controllers = [] } = useAllControllers();
 
   // Generate select items from memoized data
   const linesItems = selectItemsGenerator<Line>(lines);
@@ -91,6 +78,12 @@ export function CreateScheduleModal({ isOpen, onClose }: CreateScheduleModalProp
   const daysBitmask = watch('daysBitmask');
   const activationDate = watch('activationDate');
 
+  const minDeactivationDate = React.useMemo(() => {
+    if (!activationDate) return undefined;
+    const date = new Date(activationDate);
+    date.setDate(date.getDate() + 7);
+    return date.toISOString().split('T')[0];
+  }, [activationDate]);
 
   const selectedLine = React.useMemo(() => lines.find(l => l.id === selectedLineId), [lines, selectedLineId]);
 
@@ -261,7 +254,7 @@ export function CreateScheduleModal({ isOpen, onClose }: CreateScheduleModalProp
                       <DatePicker
                         id="deactivation-date"
                         value={field.value}
-                        minDate={activationDate}
+                        minDate={minDeactivationDate}
                         allowClear
                         onChange={field.onChange}
                       />

@@ -30,6 +30,8 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.sncft.app.shared.config.AppConstants.*;
+
 import com.sncft.app.subscription.Subscription;
 import com.sncft.app.subscription.SubscriptionRepository;
 
@@ -38,7 +40,6 @@ import com.sncft.app.subscription.SubscriptionRepository;
 @Slf4j
 public class TripService {
 
-    private static final String SEGMENT_LOCK_KEY_PREFIX = "trip_segment_lock:";
     private static final double PRICE_PER_KM = 0.05; // 0.05 TND per KM
     private static final int BOOKING_DEADLINE_MINUTES = 15;
 
@@ -282,7 +283,7 @@ public class TripService {
                 // free booking if user have active sub at trip date
                 UUID lineId = trip.getTripSchedule().getLine().getId();
                 Optional<Subscription> subscription = subscriptionRepository.findActiveByUserIdAndLineId(user.getId(), lineId);
-                freeBookingAllowed = subscription.isPresent() && !trip.getDate().isAfter(subscription.get().getExpireDate());
+                freeBookingAllowed = subscription.isPresent() && (subscription.get().getExpireDate()==null || !trip.getDate().isAfter(subscription.get().getExpireDate()));
             }
         }
 
@@ -322,7 +323,7 @@ public class TripService {
                             trip.getId(), seatClassId, sa.getSegmentOrder());
                     String lockValue = redisTemplate.opsForValue().get(lockKey);
                     int activeLocks = (lockValue != null) ? Integer.parseInt(lockValue) : 0; // default to 0 if no lock
-                    return (sa.getAvailableSeats() - activeLocks) > 0;
+                     return (sa.getAvailableSeats() - activeLocks) > 0;
                 });
     }
 
@@ -332,7 +333,7 @@ public class TripService {
     private Boolean isUserBlocked() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // if user is not authenticated or is anonymous, pass the restriction check
+        // if user is not authentibuildTripcated or is anonymous, pass the restriction check
         if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
             return null;
         }

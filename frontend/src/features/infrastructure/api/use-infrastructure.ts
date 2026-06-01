@@ -1,7 +1,11 @@
-import {  useMutation, useQueryClient, useInfiniteQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { infrastructureApi } from './infrastructure';
+import { fetchAllPages } from '@/lib/api-utils';
 import type {
+  Station,
   StationRequest,
+  Train,
+  Line,
   TrainPatchRequest,
   SeatClassPatchRequest,
 } from '../types';
@@ -10,8 +14,11 @@ import type {
 export const infrastructureKeys = {
   all: ['infrastructure'] as const, // base key for all queries
   stations: () => [...infrastructureKeys.all, 'stations'] as const,
+  stationsAll: () => [...infrastructureKeys.all, 'stations-all'] as const,
   trains: () => [...infrastructureKeys.all, 'trains'] as const,
+  trainsAll: () => [...infrastructureKeys.all, 'trains-all'] as const,
   lines: () => [...infrastructureKeys.all, 'lines'] as const,
+  linesAll: () => [...infrastructureKeys.all, 'lines-all'] as const,
 };
 
 // Stations Hooks
@@ -28,6 +35,15 @@ export const useStations = () => {
     },
   });
 };
+
+// get all stations in one hook for forms that need the full list.
+export const useAllStations = () => {
+  return useQuery({
+    queryKey: infrastructureKeys.stationsAll(),
+    queryFn: () => fetchAllPages<Station>(infrastructureApi.getStations),
+  });
+} 
+
 
 export const useCreateStation = () => {
   const queryClient = useQueryClient();
@@ -70,6 +86,13 @@ export const useTrains = () => {
     getNextPageParam: (lastPage, allPages) => {
       return lastPage.last ? undefined : allPages.length;
     },
+  });
+};
+
+export const useAllTrains = () => {
+  return useQuery({
+    queryKey: infrastructureKeys.trainsAll(),
+    queryFn: () => fetchAllPages<Train>(infrastructureApi.getTrains),
   });
 };
 
@@ -124,6 +147,13 @@ export const useLines = () => {
     getNextPageParam: (lastPage, allPages) => {
       return lastPage.last ? undefined : allPages.length;
     },
+  });
+};
+
+export const useAllLines = () => {
+  return useQuery({
+    queryKey: infrastructureKeys.linesAll(),
+    queryFn: () => fetchAllPages<Line>(infrastructureApi.getLines),
   });
 };
 
